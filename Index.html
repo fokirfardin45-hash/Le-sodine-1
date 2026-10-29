@@ -1,1165 +1,730 @@
 <!DOCTYPE html>
 <html lang="it">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Le-sodine</title>
-  <style>
-    :root {
-      --bg: #f2f1f0;
-      --panel: #f8f5f3;
-      --white: #ffffff;
-      --text: #2a1d1a;
-      --muted: #7a6e6a;
-      --primary: #b62d5d;
-      --primary-2: #8b2148;
-      --accent: #f0b2c4;
-      --gold: #d9a45e;
-      --success: #1e9d5e;
-      --warn: #e7a600;
-      --danger: #c53939;
-      --shadow: 0 12px 26px rgba(67, 32, 34, 0.12);
-      --radius: 24px;
-      --soft-radius: 18px;
-      --bottom-nav-h: 76px;
-    }
-
-    * { box-sizing: border-box; }
-    html, body { margin: 0; height: 100%; font-family: Arial, Helvetica, sans-serif; background: #dfe0e2; }
-    body {
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      color: var(--text);
-    }
-
-    .app {
-      width: 100%;
-      max-width: 450px;
-      min-height: 100vh;
-      background: var(--bg);
-      position: relative;
-      box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
-      padding-bottom: calc(var(--bottom-nav-h) + 26px);
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 10;
-      background: rgba(35, 30, 30, 0.92);
-      backdrop-filter: blur(8px);
-      color: #fff;
-      padding: 14px 16px 12px;
-      border-bottom: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .brand-wrap {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex: 1;
-      min-width: 0;
-    }
-
-    .brand-box {
-      width: 38px;
-      height: 38px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: linear-gradient(135deg, #f5d7dd, #d5d7db);
-      color: var(--primary-2);
-      font-size: 1.2rem;
-      overflow: hidden;
-      flex-shrink: 0;
-    }
-
-    .brand-box img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-    }
-
-    .brand-text {
-      font-size: 0.86rem;
-      color: rgba(255,255,255,0.7);
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    .brand-text strong {
-      display: block;
-      color: white;
-      font-size: 0.95rem;
-      font-weight: 700;
-    }
-
-    .staff-btn {
-      background: linear-gradient(135deg, #f2d7d8, #e7c1d0);
-      color: var(--primary-2);
-      border: none;
-      border-radius: 18px;
-      padding: 10px 16px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(171, 86, 114, 0.2);
-    }
-
-    .content {
-      padding: 16px 14px 0;
-    }
-
-    .screen { display: none; }
-    .screen.active { display: block; }
-
-    .welcome-card {
-      background: linear-gradient(135deg, #c5355a 0%, #8d254d 100%);
-      border-radius: 22px;
-      padding: 22px 20px;
-      color: white;
-      box-shadow: var(--shadow);
-      margin-bottom: 22px;
-    }
-
-    .welcome-card h1 {
-      margin: 0 0 8px;
-      font-size: clamp(2rem, 7vw, 2.8rem);
-      line-height: 1.05;
-      letter-spacing: -0.05em;
-    }
-
-    .welcome-card p {
-      margin: 0;
-      color: rgba(255,255,255,0.8);
-      font-size: 1rem;
-      line-height: 1.5;
-    }
-
-    .section-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 20px 0 14px;
-    }
-
-    .section-head h2 {
-      margin: 0;
-      font-size: 1.15rem;
-      letter-spacing: -0.04em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .menu-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .menu-item {
-      display: grid;
-      grid-template-columns: 82px 1fr;
-      gap: 12px;
-      background: rgba(255,255,255,0.7);
-      border: 1px solid rgba(110, 76, 70, 0.08);
-      border-radius: 18px;
-      padding: 12px;
-      box-shadow: 0 8px 20px rgba(48, 28, 30, 0.04);
-    }
-
-    .menu-item img {
-      width: 82px;
-      height: 82px;
-      object-fit: cover;
-      border-radius: 14px;
-      background: #ddd;
-    }
-
-    .menu-body {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-    }
-
-    .menu-name {
-      font-weight: 800;
-      font-size: 1.05rem;
-      letter-spacing: -0.04em;
-      margin-bottom: 6px;
-    }
-
-    .menu-desc {
-      color: var(--muted);
-      font-size: 0.82rem;
-      line-height: 1.45;
-      margin-bottom: 10px;
-    }
-
-    .menu-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-    }
-
-    .price-tag {
-      color: var(--primary);
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.03em;
-    }
-
-    .qty-box {
-      display: inline-flex;
-      align-items: center;
-      border-radius: 12px;
-      background: #f1ede8;
-      overflow: hidden;
-      border: 1px solid rgba(80, 55, 60, 0.08);
-      min-width: 120px;
-      justify-content: space-between;
-    }
-
-    .qty-btn {
-      width: 34px;
-      height: 34px;
-      border: none;
-      background: transparent;
-      color: var(--primary);
-      font-size: 1.5rem;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .qty-num {
-      min-width: 22px;
-      text-align: center;
-      font-weight: 800;
-      font-size: 1rem;
-    }
-
-    .checkout-bar {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 86px;
-      width: min(440px, calc(100% - 18px));
-      background: rgba(255,255,255,0.96);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(0,0,0,0.04);
-      border-radius: 18px;
-      box-shadow: 0 12px 26px rgba(57, 32, 34, 0.14);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      z-index: 12;
-    }
-
-    .checkout-bar small {
-      display: block;
-      color: var(--muted);
-      font-size: 0.72rem;
-      margin-bottom: 3px;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .checkout-bar strong {
-      font-size: 1.15rem;
-      letter-spacing: -0.04em;
-      color: var(--primary-2);
-    }
-
-    .checkout-btn {
-      border: none;
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
-      padding: 12px 18px;
-      border-radius: 12px;
-      font-weight: 800;
-      cursor: pointer;
-      box-shadow: 0 8px 18px rgba(182, 45, 93, 0.2);
-    }
-
-    .bottom-nav {
-      position: fixed;
-      left: 50%;
-      transform: translateX(-50%);
-      bottom: 0;
-      width: min(450px, 100%);
-      height: var(--bottom-nav-h);
-      background: rgba(255,255,255,0.96);
-      border-top: 1px solid rgba(0,0,0,0.05);
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      z-index: 20;
-      box-shadow: 0 -8px 20px rgba(0,0,0,0.04);
-    }
-
-    .nav-item {
-      border: none;
-      background: transparent;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      color: var(--muted);
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    .nav-item.active {
-      color: var(--primary);
-    }
-
-    .nav-icon {
-      font-size: 1.35rem;
-    }
-
-    .nav-label {
-      font-size: 0.78rem;
-      letter-spacing: -0.03em;
-    }
-
-    .modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(28, 17, 17, 0.42);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 18px;
-      z-index: 40;
-    }
-
-    .modal.open { display: flex; }
-
-    .modal-card {
-      width: min(100%, 380px);
-      background: #fff;
-      border-radius: 26px;
-      padding: 20px;
-      box-shadow: var(--shadow);
-    }
-
-    .modal-card h3 {
-      margin: 0 0 8px;
-      font-size: 1.45rem;
-      letter-spacing: -0.05em;
-    }
-
-    .modal-card p {
-      margin: 0 0 16px;
-      color: var(--muted);
-      font-size: 0.93rem;
-    }
-
-    .field {
-      display: grid;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .field label {
-      display: block;
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: var(--muted);
-      font-weight: 800;
-    }
-
-    .field input, .field textarea, .field select {
-      width: 100%;
-      border: 1px solid rgba(100,90,86,0.18);
-      border-radius: 12px;
-      padding: 12px 13px;
-      font-size: 0.96rem;
-      background: #faf6f4;
-      outline: none;
-    }
-
-    .field textarea {
-      min-height: 86px;
-      resize: vertical;
-    }
-
-    .modal-actions {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 10px;
-      margin-top: 14px;
-    }
-
-    .btn {
-      border: none;
-      border-radius: 12px;
-      padding: 12px 14px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .btn.primary {
-      background: linear-gradient(135deg, var(--primary), var(--primary-2));
-      color: white;
-      box-shadow: 0 8px 18px rgba(182, 45, 93, 0.2);
-    }
-
-    .btn.secondary {
-      background: #f4ece9;
-      color: var(--text);
-    }
-
-    .alert-box {
-      background: rgba(33, 22, 20, 0.9);
-      border-radius: 18px;
-      color: white;
-      padding: 18px 16px 16px;
-      margin-bottom: 18px;
-      box-shadow: 0 16px 28px rgba(38, 22, 22, 0.14);
-    }
-
-    .alert-box h3 {
-      margin: 0 0 8px;
-      font-size: 1.2rem;
-      letter-spacing: -0.04em;
-    }
-
-    .alert-box p {
-      margin: 0;
-      color: rgba(255,255,255,0.82);
-      line-height: 1.6;
-    }
-
-    .alert-box .ok-btn {
-      display: block;
-      margin-left: auto;
-      margin-top: 16px;
-      background: transparent;
-      color: #ffd8e5;
-      border: none;
-      font-weight: 900;
-      font-size: 1rem;
-      cursor: pointer;
-    }
-
-    .orders-list, .staff-list {
-      display: grid;
-      gap: 14px;
-    }
-
-    .order-card, .staff-order-card {
-      background: rgba(255,255,255,0.72);
-      border-radius: 18px;
-      padding: 14px;
-      box-shadow: 0 8px 20px rgba(36, 27, 28, 0.06);
-      border: 1px solid rgba(98,77,79,0.08);
-    }
-
-    .order-card-head {
-      display: flex;
-      justify-content: space-between;
-      gap: 12px;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-
-    .order-id {
-      font-weight: 800;
-      font-size: 0.9rem;
-      letter-spacing: -0.03em;
-    }
-
-    .status-pill {
-      font-size: 0.7rem;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-weight: 900;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-    }
-
-    .status-1 { background: #fef0b8; color: #7d5d14; }
-    .status-2 { background: #dfefff; color: #1454a0; }
-    .status-3 { background: #dff5e7; color: #0f7a47; }
-
-    .order-meta {
-      display: grid;
-      gap: 5px;
-      font-size: 0.82rem;
-      line-height: 1.5;
-      color: var(--muted);
-    }
-
-    .status-actions {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .mini-btn {
-      border: none;
-      border-radius: 10px;
-      padding: 9px 8px;
-      font-weight: 700;
-      cursor: pointer;
-      color: white;
-    }
-
-    .mini-btn.ready { background: #2a82ff; }
-    .mini-btn.done { background: var(--success); }
-    .mini-btn.pending { background: #d98a22; }
-
-    .account-block {
-      background: rgba(255,255,255,0.7);
-      border-radius: 20px;
-      padding: 16px;
-      box-shadow: 0 10px 22px rgba(40, 25, 28, 0.05);
-      border: 1px solid rgba(110, 76, 70, 0.08);
-      display: grid;
-      gap: 12px;
-    }
-
-    .location-chip {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      background: #f5efee;
-      border-radius: 12px;
-      padding: 10px 12px;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
-    .small-btn {
-      border: none;
-      background: #efe8e5;
-      color: var(--primary-2);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    .staff-grid {
-      display: grid;
-      gap: 18px;
-    }
-
-    .admin-panel {
-      background: rgba(255,255,255,0.7);
-      border-radius: 18px;
-      padding: 16px;
-      border: 1px solid rgba(77, 54, 57, 0.08);
-    }
-
-    .admin-panel h3 {
-      margin: 0 0 14px;
-      letter-spacing: -0.04em;
-    }
-
-    .admin-row {
-      display: grid;
-      grid-template-columns: 1fr auto;
-      gap: 10px;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .admin-row .label {
-      font-size: 0.82rem;
-      color: var(--muted);
-      font-weight: 700;
-    }
-
-    .admin-row .value {
-      font-weight: 800;
-    }
-
-    .admin-row .update-btn {
-      border: none;
-      background: #f5d5df;
-      color: var(--primary-2);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-weight: 800;
-      cursor: pointer;
-    }
-
-    @media (min-width: 760px) {
-      .app { min-height: 100vh; }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <header class="topbar">
-      <div class="topbar-inner">
-        <div class="brand-wrap">
-          <div class="brand-box">
-            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" alt="Le-sodine logo" />
-          </div>
-          <div class="brand-text">
-            <strong>Le-sodine</strong>
-            Panini Artigianali &amp; Delivery
-          </div>
-        </div>
-        <button class="staff-btn" id="areaStaffBtn" type="button">Area Staff</button>
-      </div>
-    </header>
-
-    <main class="content">
-      <section id="screen-home" class="screen active">
-        <div class="welcome-card">
-          <h1>Le-sodine</h1>
-          <p>Ordina i migliori panini artigianali e kebab direttamente a casa tua. Consegna rapida in Morolo, Supino e Ferentino.</p>
-        </div>
-
-        <div class="section-head">
-          <h2>📋 Il nostro menù</h2>
-        </div>
-        <div id="menuList" class="menu-list"></div>
-      </section>
-
-      <section id="screen-orders" class="screen">
-        <div class="section-head">
-          <h2>🧾 I tuoi ordini</h2>
-        </div>
-        <div id="ordersList" class="orders-list"></div>
-      </section>
-
-      <section id="screen-account" class="screen">
-        <div class="section-head">
-          <h2>👤 Account</h2>
-        </div>
-        <div class="account-block">
-          <div class="field">
-            <label>Nome</label>
-            <input id="customerName" type="text" placeholder="Es. Marco Rossi" />
-          </div>
-          <div class="field">
-            <label>Telefono</label>
-            <input id="customerPhone" type="tel" placeholder="Es. +39 345 123 4567" />
-          </div>
-          <div class="field">
-            <label>Indirizzo</label>
-            <input id="customerAddress" type="text" placeholder="Es. Via Roma 12, Morolo" />
-          </div>
-          <div class="location-chip">
-            <span id="locationStatus">GPS non attivato</span>
-            <button class="small-btn" id="locBtn" type="button">Permetti posizione</button>
-          </div>
-          <button class="btn primary" id="saveProfileBtn" type="button">Salva profilo</button>
-        </div>
-      </section>
-
-      <section id="screen-staff" class="screen">
-        <div class="section-head">
-          <h2>🛎️ Area Staff</h2>
-        </div>
-
-        <div class="staff-grid">
-          <div class="admin-panel">
-            <h3>Gestione menu</h3>
-            <div id="staffMenuEditor"></div>
-          </div>
-
-          <div class="admin-panel">
-            <h3>Ordini ricevuti</h3>
-            <div id="staffOrderList" class="staff-list"></div>
-          </div>
-        </div>
-      </section>
-    </main>
-
-    <div class="checkout-bar">
-      <div>
-        <small>Totale</small>
-        <strong id="checkoutTotal">€ 0.00</strong>
-      </div>
-      <button class="checkout-btn" id="checkoutBtn" type="button">Conferma</button>
-    </div>
-
-    <nav class="bottom-nav" aria-label="Navigazione principale">
-      <button class="nav-item active" data-screen="home" type="button">
-        <span class="nav-icon">🏠</span>
-        <span class="nav-label">Home</span>
-      </button>
-      <button class="nav-item" data-screen="orders" type="button">
-        <span class="nav-icon">📦</span>
-        <span class="nav-label">Ordini</span>
-      </button>
-      <button class="nav-item" data-screen="account" type="button">
-        <span class="nav-icon">👤</span>
-        <span class="nav-label">Account</span>
-      </button>
-    </nav>
-  </div>
-
-  <div class="modal" id="staffModal">
-    <div class="modal-card">
-      <h3>Verifica staff</h3>
-      <p>Per accedere all&apos;area staff occorre verificare email o numero di telefono.</p>
-      <div class="field">
-        <label>Email</label>
-        <input id="staffEmail" type="email" placeholder="nome@esempio.it" />
-      </div>
-      <div class="field">
-        <label>Telefono</label>
-        <input id="staffPhone" type="tel" placeholder="+39 345 000 0000" />
-      </div>
-      <div class="modal-actions">
-        <button class="btn secondary" id="closeStaffModalBtn" type="button">Chiudi</button>
-        <button class="btn primary" id="verifyStaffBtn" type="button">Verifica</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal" id="checkoutModal">
-    <div class="modal-card">
-      <h3>Conferma ordine</h3>
-      <div class="field">
-        <label>Nome</label>
-        <input id="checkoutName" type="text" placeholder="Nome e cognome" />
-      </div>
-      <div class="field">
-        <label>Telefono</label>
-        <input id="checkoutPhone" type="tel" placeholder="+39 ..." />
-      </div>
-      <div class="field">
-        <label>Indirizzo</label>
-        <input id="checkoutAddress" type="text" placeholder="Via, numero, città" />
-      </div>
-      <div class="field">
-        <label>Metodo pagamento</label>
-        <select id="checkoutPayment">
-          <option value="Contanti alla consegna">Contanti alla consegna</option>
-          <option value="Carta / Online">Carta / Online</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Note</label>
-        <textarea id="checkoutNotes" placeholder="Es. senza maionese, citofono Bianchi"></textarea>
-      </div>
-      <div class="modal-actions">
-        <button class="btn secondary" id="closeCheckoutModalBtn" type="button">Indietro</button>
-        <button class="btn primary" id="submitOrderBtn" type="button">Invia ordine</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    const defaultMenu = [
-      { id: 1, name: 'Panino Classico Prosciutto', desc: 'Prosciutto crudo, mozzarella di bufala e pomodoro.', price: 6.50, img: 'https://images.unsplash.com/photo-1528735602780-2552fd4c7f8?auto=format&fit=crop&w=800&q=80' },
-      { id: 2, name: 'Panino Diavola Piccante', desc: 'Salame piccante, provola affumicata e nduja.', price: 7.00, img: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80' },
-      { id: 3, name: 'Panino Vegetariano Fresco', desc: 'Verdure grigliate, scamorza, rucola e crema di basilico.', price: 6.00, img: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80' },
-      { id: 4, name: 'Panino Porchetta', desc: 'Porchetta romana croccante, patate al forno e maionese.', price: 7.60, img: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80' },
-      { id: 5, name: 'Panino Tonno e Cipolla', desc: 'Tonno fresco, cipolla rossa, insalata e maionese.', price: 6.50, img: 'https://images.unsplash.com/photo-1550317138-10000687a72b?auto=format&fit=crop&w=800&q=80' }
-    ];
-
-    const state = {
-      screen: 'home',
-      cart: JSON.parse(localStorage.getItem('lesodine_cart') || '{}'),
-      orders: JSON.parse(localStorage.getItem('lesodine_orders') || '[]'),
-      profile: JSON.parse(localStorage.getItem('lesodine_profile') || '{}'),
-      menu: JSON.parse(localStorage.getItem('lesodine_menu') || 'null') || defaultMenu,
-      staffVerified: localStorage.getItem('lesodine_staff_verified') === 'true'
-    };
-
-    const byId = id => document.getElementById(id);
-
-    function saveMenu() {
-      localStorage.setItem('lesodine_menu', JSON.stringify(state.menu));
-    }
-
-    function saveCart() {
-      localStorage.setItem('lesodine_cart', JSON.stringify(state.cart));
-    }
-
-    function saveProfile() {
-      localStorage.setItem('lesodine_profile', JSON.stringify(state.profile));
-    }
-
-    function saveOrders() {
-      localStorage.setItem('lesodine_orders', JSON.stringify(state.orders));
-    }
-
-    function formatMoney(value) {
-      return `€ ${Number(value).toFixed(2)}`;
-    }
-
-    function getTotalCart() {
-      return Object.entries(state.cart).reduce((sum, [id, qty]) => {
-        const item = state.menu.find(p => p.id === Number(id));
-        return sum + (item ? item.price * qty : 0);
-      }, 0);
-    }
-
-    function renderMenu() {
-      const menuList = byId('menuList');
-      menuList.innerHTML = state.menu.map(item => `
-        <div class="menu-item">
-          <img src="${item.img}" alt="${item.name}" />
-          <div class="menu-body">
-            <div class="menu-name">${item.name}</div>
-            <div class="menu-desc">${item.desc}</div>
-            <div class="menu-row">
-              <span class="price-tag">${formatMoney(item.price)}</span>
-              <div class="qty-box">
-                <button class="qty-btn" type="button" data-action="minus" data-id="${item.id}">−</button>
-                <span class="qty-num">${state.cart[item.id] || 0}</span>
-                <button class="qty-btn" type="button" data-action="plus" data-id="${item.id}">+</button>
-              </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Le-sodine</title>
+    <style>
+      :root {
+        --bg: #f2f1f0;
+        --panel: #f8f5f3;
+        --white: #ffffff;
+        --text: #2a1d1a;
+        --muted: #7a6e6a;
+        --primary: #b62d5d;
+        --primary-2: #8b2148;
+        --accent: #f0b2c4;
+        --gold: #d9a45e;
+        --success: #1e9d5e;
+        --warn: #e7a600;
+        --danger: #c53939;
+        --shadow: 0 12px 26px rgba(67, 32, 34, 0.12);
+        --radius: 24px;
+        --soft-radius: 18px;
+        --bottom-nav-h: 76px;
+      }
+
+      * { box-sizing: border-box; }
+      html, body {
+        margin: 0;
+        height: 100%;
+        font-family: Arial, Helvetica, sans-serif;
+        background: #dfe0e2;
+      }
+
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        color: var(--text);
+      }
+
+      .app {
+        width: 100%;
+        max-width: 450px;
+        min-height: 100vh;
+        background: var(--bg);
+        position: relative;
+        box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
+        padding-bottom: calc(var(--bottom-nav-h) + 26px);
+      }
+
+      .topbar {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background: rgba(35, 30, 30, 0.92);
+        backdrop-filter: blur(8px);
+        color: #fff;
+        padding: 14px 16px 12px;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+      }
+
+      .topbar-inner {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .brand-wrap {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 1;
+        min-width: 0;
+      }
+
+      .brand-box {
+        width: 38px;
+        height: 38px;
+        border-radius: 12px;
+        display: grid;
+        place-items: center;
+        background: linear-gradient(135deg, #f5d7dd, #d5d7db);
+        color: var(--primary-2);
+        font-size: 1.2rem;
+        overflow: hidden;
+        flex-shrink: 0;
+      }
+
+      .brand-box img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+      }
+
+      .brand-text {
+        font-size: 0.86rem;
+        color: rgba(255,255,255,0.7);
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .brand-text strong {
+        display: block;
+        color: #fff;
+        font-size: 1rem;
+      }
+
+      .staff-btn {
+        border: 0;
+        border-radius: 12px;
+        background: linear-gradient(135deg, #ffb174, #f98752);
+        color: #311b17;
+        font-weight: 700;
+        padding: 8px 12px;
+        font-size: 0.77rem;
+        cursor: pointer;
+      }
+
+      .page {
+        padding: 16px 14px 28px;
+      }
+
+      .hero {
+        background: linear-gradient(135deg, #b62d5d, #8b2148);
+        color: #fff;
+        border-radius: 26px;
+        padding: 18px 16px;
+        box-shadow: var(--shadow);
+        margin-bottom: 16px;
+      }
+
+      .hero h1 {
+        margin: 0 0 8px;
+        font-size: 1.55rem;
+        line-height: 1.15;
+      }
+
+      .hero p {
+        margin: 0;
+        font-size: 0.88rem;
+        line-height: 1.5;
+        color: rgba(255,255,255,0.9);
+      }
+
+      .chip-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        margin: 18px 0 12px;
+      }
+
+      .chip {
+        border: 1px solid rgba(182,45,93,0.17);
+        border-radius: 999px;
+        padding: 8px 10px;
+        background: rgba(255,255,255,0.75);
+        font-size: 0.75rem;
+        color: var(--primary-2);
+        font-weight: 700;
+      }
+
+      .section {
+        background: var(--panel);
+        border-radius: var(--radius);
+        padding: 14px 12px;
+        box-shadow: 0 8px 18px rgba(44, 29, 26, 0.04);
+        margin-bottom: 16px;
+      }
+
+      .section-title {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        margin-bottom: 12px;
+      }
+
+      .section-title h2 {
+        margin: 0;
+        font-size: 1.05rem;
+      }
+
+      .tiny {
+        font-size: 0.72rem;
+        color: var(--muted);
+      }
+
+      .menu-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .menu-item {
+        display: flex;
+        align-items: center;
+        background: var(--white);
+        border-radius: var(--soft-radius);
+        padding: 10px;
+        box-shadow: 0 8px 18px rgba(42,29,26,0.05);
+      }
+
+      .menu-item img {
+        width: 78px;
+        height: 78px;
+        object-fit: cover;
+        border-radius: 14px;
+        flex-shrink: 0;
+      }
+
+      .menu-info {
+        flex: 1;
+        min-width: 0;
+        margin-left: 12px;
+      }
+
+      .menu-info h3 {
+        margin: 0 0 4px;
+        font-size: 0.96rem;
+      }
+
+      .menu-info p {
+        margin: 0 0 8px;
+        color: var(--muted);
+        font-size: 0.76rem;
+        line-height: 1.4;
+      }
+
+      .menu-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .price {
+        color: var(--primary);
+        font-weight: 700;
+        font-size: 1.02rem;
+      }
+
+      .qty-box {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 6px;
+        border-radius: 999px;
+        background: #f7ecef;
+      }
+
+      .qty-btn {
+        width: 26px;
+        height: 26px;
+        border: 0;
+        border-radius: 50%;
+        background: var(--primary);
+        color: #fff;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .qty-value {
+        min-width: 18px;
+        text-align: center;
+        font-weight: 700;
+        color: var(--primary-2);
+      }
+
+      .summary-box {
+        background: #fff;
+        border-radius: 18px;
+        padding: 14px 12px;
+        border: 1px dashed rgba(182,45,93,0.35);
+      }
+
+      .summary-list {
+        list-style: none;
+        padding: 0;
+        margin: 0 0 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        color: var(--text);
+        font-size: 0.82rem;
+      }
+
+      .summary-list li {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .summary-total {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-top: 12px;
+        border-top: 1px solid rgba(0,0,0,0.08);
+        font-weight: 700;
+      }
+
+      .form-group {
+        margin-top: 12px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 0.72rem;
+        color: var(--muted);
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .form-group input,
+      .form-group textarea,
+      .form-group select {
+        width: 100%;
+        border: 1px solid rgba(42,29,26,0.12);
+        border-radius: 12px;
+        background: #fff;
+        padding: 11px 12px;
+        font-size: 0.92rem;
+        color: var(--text);
+        resize: vertical;
+      }
+
+      textarea {
+        min-height: 72px;
+      }
+
+      .primary-btn {
+        width: 100%;
+        border: 0;
+        background: linear-gradient(135deg, #b62d5d, #8b2148);
+        color: #fff;
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-top: 14px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .hidden {
+        display: none !important;
+      }
+
+      .staff-panel {
+        background: #fff;
+        border-radius: 24px;
+        padding: 14px 12px;
+        box-shadow: 0 8px 18px rgba(44,29,26,0.04);
+      }
+
+      .order-card {
+        background: #fff7f8;
+        border: 1px solid rgba(182,45,93,0.12);
+        border-radius: 18px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+
+      .order-head {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .order-id {
+        font-weight: 700;
+        font-size: 0.9rem;
+      }
+
+      .status-badge {
+        border-radius: 999px;
+        padding: 5px 8px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: #fff;
+      }
+
+      .status-pending { background: var(--warn); }
+      .status-preparing { background: #2a7de1; }
+      .status-complete { background: var(--success); }
+
+      .order-card p {
+        margin: 3px 0;
+        color: var(--text);
+        font-size: 0.76rem;
+        line-height: 1.45;
+      }
+
+      .status-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .status-actions button {
+        flex: 1;
+        border: 0;
+        border-radius: 10px;
+        padding: 8px 6px;
+        font-weight: 700;
+        cursor: pointer;
+        color: #fff;
+      }
+
+      .prep { background: #2a7de1; }
+      .done { background: var(--success); }
+
+      @media (max-width: 380px) {
+        .topbar-inner {
+          gap: 8px;
+        }
+
+        .brand-text {
+          font-size: 0.75rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header class="topbar">
+        <div class="topbar-inner">
+          <div class="brand-wrap">
+            <div class="brand-box">🥪</div>
+            <div class="brand-text">
+              <strong>Le-sodine</strong>
+              Panini • Kebab • Delivery
             </div>
           </div>
+          <button class="staff-btn" onclick="openStaffPanel()">Staff</button>
         </div>
-      `).join('');
+      </header>
 
-      updateCheckoutBar();
-    }
-
-    function updateCheckoutBar() {
-      const total = getTotalCart();
-      byId('checkoutTotal').textContent = formatMoney(total);
-    }
-
-    function changeQty(id, delta) {
-      const current = Number(state.cart[id] || 0) + delta;
-      if (current <= 0) delete state.cart[id];
-      else state.cart[id] = current;
-      saveCart();
-      renderMenu();
-    }
-
-    function renderOrders() {
-      const ordersList = byId('ordersList');
-      if (!state.orders.length) {
-        ordersList.innerHTML = '<div class="alert-box"><h3>Nessun ordine</h3><p>Non hai ancora effettuato ordini. Aggiungi un panino dal menù e conferma il tuo ordine.</p></div>';
-        return;
-      }
-
-      ordersList.innerHTML = state.orders.map(order => `
-        <div class="order-card">
-          <div class="order-card-head">
-            <div class="order-id">${order.id}</div>
-            <span class="status-pill ${statusClass(order.status)}">${order.status}</span>
+      <main class="page">
+        <section id="customerView">
+          <div class="hero">
+            <h1>Ordina subito</h1>
+            <p>Panini artigianali, kebab, bibite e consegna veloce a Morolo, Supino e Ferentino.</p>
           </div>
-          <div class="order-meta">
-            <div><strong>Prodotti:</strong> ${order.items}</div>
-            <div><strong>Totale:</strong> ${order.total}</div>
-            <div><strong>Indirizzo:</strong> ${order.address}</div>
-            <div><strong>Telefono:</strong> ${order.phone}</div>
-            <div><strong>Pagamento:</strong> ${order.payment}</div>
+
+          <div class="chip-row">
+            <div class="chip">🍔 Panini</div>
+            <div class="chip">🥙 Kebab</div>
+            <div class="chip">🥤 Bevande</div>
+            <div class="chip">🚚 Consegna</div>
           </div>
-        </div>
-      `).join('');
-    }
 
-    function statusClass(status) {
-      if (status === 'In preparazione') return 'status-1';
-      if (status === 'Pronto') return 'status-2';
-      return 'status-3';
-    }
+          <section class="section">
+            <div class="section-title">
+              <h2>Menù</h2>
+              <span class="tiny">Tutto freschissimo</span>
+            </div>
+            <div class="menu-list" id="menuList"></div>
+          </section>
 
-    function renderProfile() {
-      const p = state.profile;
-      byId('customerName').value = p.name || '';
-      byId('customerPhone').value = p.phone || '';
-      byId('customerAddress').value = p.address || '';
-      byId('checkoutName').value = p.name || '';
-      byId('checkoutPhone').value = p.phone || '';
-      byId('checkoutAddress').value = p.address || '';
-      byId('locationStatus').textContent = p.location ? `GPS: ${p.location}` : 'GPS non attivato';
-    }
+          <section class="section">
+            <div class="section-title">
+              <h2>Riepilogo ordine</h2>
+            </div>
+            <div class="summary-box">
+              <ul class="summary-list" id="summaryList"></ul>
+              <div class="summary-total">
+                <span>Totale</span>
+                <span id="totalPrice">€ 0.00</span>
+              </div>
+            </div>
 
-    function renderStaffMenuEditor() {
-      const panel = byId('staffMenuEditor');
-      panel.innerHTML = state.menu.map(item => `
-        <div class="admin-row">
-          <div>
-            <div class="label">${item.name}</div>
-            <div class="value">${formatMoney(item.price)}</div>
+            <div class="form-group">
+              <label for="address">Indirizzo consegna</label>
+              <input id="address" type="text" placeholder="Via ..., numero, città o GPS" />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Telefono</label>
+              <input id="phone" type="tel" placeholder="+39 ..." />
+            </div>
+
+            <div class="form-group">
+              <label for="notes">Note</label>
+              <textarea id="notes" placeholder="Senza maionese, citofono, piano, ecc."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label for="payment">Pagamento</label>
+              <select id="payment">
+                <option>Contanti alla consegna</option>
+                <option>Pagamento online</option>
+              </select>
+            </div>
+
+            <button class="primary-btn" onclick="submitOrder()">Invia ordine su WhatsApp</button>
+          </section>
+        </section>
+
+        <section id="staffView" class="hidden">
+          <div class="staff-panel">
+            <div class="section-title">
+              <h2>Dashboard staff</h2>
+              <span class="tiny">Codice: 45800</span>
+            </div>
+            <div id="staffOrders"></div>
           </div>
-          <button class="update-btn" data-edit-id="${item.id}" type="button">Modifica</button>
-        </div>
-      `).join('');
+        </section>
+      </main>
+    </div>
 
-      panel.querySelectorAll('.update-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-          const id = Number(btn.dataset.editId);
-          const item = state.menu.find(p => p.id === id);
-          const newName = prompt('Nuovo nome del panino:', item.name);
-          const newDesc = prompt('Nuova descrizione:', item.desc);
-          const newPrice = prompt('Nuovo prezzo (€):', item.price);
-          if (newName && newDesc && newPrice) {
-            item.name = newName.trim();
-            item.desc = newDesc.trim();
-            item.price = Number(newPrice);
-            saveMenu();
-            renderMenu();
-            renderStaffMenuEditor();
-          }
-        });
-      });
-    }
+    <script>
+      const STAFF_CODE = '45800';
+      const WHATSAPP_NUMBER = '393447513295';
 
-    function renderStaffOrders() {
-      const list = byId('staffOrderList');
-      if (!state.orders.length) {
-        list.innerHTML = '<div class="alert-box"><h3>Nessun ordine</h3><p>La dashboard staff è vuota.</p></div>';
-        return;
+      const menu = [
+        { id: 1, name: 'Panino Prosciutto', desc: 'Prosciutto, mozzarella, pomodoro e rucola', price: 6.5, image: 'https://images.unsplash.com/photo-1528735602780-2552fd4a5f5e?auto=format&fit=crop&w=800&q=80' },
+        { id: 2, name: 'Panino Diavola', desc: 'Salame piccante, provola e rucola', price: 7.0, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80' },
+        { id: 3, name: 'Panino Vegetariano', desc: 'Verdure grigliate, scamorza e basilico', price: 6.0, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80' },
+        { id: 4, name: 'Panino Porchetta', desc: 'Porchetta, patate e maionese', price: 7.5, image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80' },
+        { id: 5, name: 'Kebab Classico', desc: 'Carne, insalata, cipolla e salsa', price: 8.0, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80' },
+        { id: 6, name: 'Kebab Speciale', desc: 'Carne, cheddar, patatine e salsa', price: 9.0, image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80' },
+        { id: 7, name: 'Acqua', desc: '500 ml', price: 1.5, image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=80' },
+        { id: 8, name: 'Coca Cola', desc: '330 ml', price: 2.5, image: 'https://images.unsplash.com/photo-1622483767028-3f66f2b7420a?auto=format&fit=crop&w=800&q=80' }
+      ];
+
+      let cart = {};
+      let orders = JSON.parse(localStorage.getItem('le_sodine_orders') || '[]');
+      let staffOpen = false;
+
+      function renderMenu() {
+        const list = document.getElementById('menuList');
+        list.innerHTML = menu.map(item => {
+          const qty = cart[item.id] || 0;
+          return `
+            <div class="menu-item">
+              <img src="${item.image}" alt="${item.name}" />
+              <div class="menu-info">
+                <h3>${item.name}</h3>
+                <p>${item.desc}</p>
+                <div class="menu-row">
+                  <span class="price">€ ${item.price.toFixed(2)}</span>
+                  <div class="qty-box">
+                    <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
+                    <span class="qty-value">${qty}</span>
+                    <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        updateSummary();
       }
 
-      list.innerHTML = state.orders.map((order, index) => `
-        <div class="staff-order-card">
-          <div class="order-card-head">
-            <div class="order-id">${order.id}</div>
-            <span class="status-pill ${statusClass(order.status)}">${order.status}</span>
-          </div>
-          <div class="order-meta">
-            <div><strong>Prodotti:</strong> ${order.items}</div>
-            <div><strong>Totale:</strong> ${order.total}</div>
-            <div><strong>Cliente:</strong> ${order.name || 'Cliente'}</div>
-            <div><strong>Telefono:</strong> ${order.phone}</div>
-            <div><strong>Indirizzo:</strong> ${order.address}</div>
-            <div><strong>Note:</strong> ${order.notes || 'Nessuna nota'}</div>
-          </div>
-          <div class="status-actions">
-            <button class="mini-btn pending" data-order-index="${index}" data-status="In preparazione" type="button">In cucina</button>
-            <button class="mini-btn ready" data-order-index="${index}" data-status="Pronto" type="button">Pronto</button>
-            <button class="mini-btn done" data-order-index="${index}" data-status="Completato" type="button">Completo</button>
-          </div>
-        </div>
-      `).join('');
-
-      list.querySelectorAll('.mini-btn').forEach(button => {
-        button.addEventListener('click', () => {
-          const idx = Number(button.dataset.orderIndex);
-          const nextStatus = button.dataset.status;
-          state.orders[idx].status = nextStatus;
-          saveOrders();
-          renderOrders();
-          renderStaffOrders();
-        });
-      });
-    }
-
-    function setScreen(screenName) {
-      state.screen = screenName;
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.toggle('active', screen.id === `screen-${screenName}`);
-      });
-      document.querySelectorAll('.nav-item').forEach(item => {
-        item.classList.toggle('active', item.dataset.screen === screenName);
-      });
-    }
-
-    function openStaffModal() {
-      byId('staffModal').classList.add('open');
-    }
-
-    function closeStaffModal() {
-      byId('staffModal').classList.remove('open');
-    }
-
-    function openCheckoutModal() {
-      const total = getTotalCart();
-      if (total <= 0) {
-        alert('Aggiungi almeno un prodotto al carrello.');
-        return;
-      }
-      const p = state.profile;
-      byId('checkoutName').value = p.name || '';
-      byId('checkoutPhone').value = p.phone || '';
-      byId('checkoutAddress').value = p.address || '';
-      byId('checkoutModal').classList.add('open');
-    }
-
-    function closeCheckoutModal() {
-      byId('checkoutModal').classList.remove('open');
-    }
-
-    function submitOrder() {
-      const name = byId('checkoutName').value.trim();
-      const phone = byId('checkoutPhone').value.trim();
-      const address = byId('checkoutAddress').value.trim();
-      const payment = byId('checkoutPayment').value;
-      const notes = byId('checkoutNotes').value.trim();
-
-      if (!name || !phone || !address) {
-        alert('Inserisci nome, telefono e indirizzo prima di confermare.');
-        return;
+      function changeQty(id, delta) {
+        cart[id] = (cart[id] || 0) + delta;
+        if (cart[id] < 0) cart[id] = 0;
+        if (cart[id] === 0) delete cart[id];
+        renderMenu();
       }
 
-      const items = Object.entries(state.cart).map(([id, qty]) => {
-        const item = state.menu.find(p => p.id === Number(id));
-        return `${item ? item.name : 'Prodotto'} x${qty}`;
-      }).join(', ');
-
-      const total = formatMoney(getTotalCart());
-      const orderId = `ORD-${Math.floor(1000 + Math.random() * 9000)}`;
-      const order = {
-        id: orderId,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        items,
-        total,
-        name,
-        phone,
-        address,
-        payment,
-        notes: notes || 'Nessuna nota',
-        status: 'In preparazione'
-      };
-
-      state.orders.unshift(order);
-      saveOrders();
-      state.profile = { ...state.profile, name, phone, address };
-      saveProfile();
-      renderProfile();
-      renderOrders();
-      renderStaffOrders();
-      state.cart = {};
-      saveCart();
-      renderMenu();
-      closeCheckoutModal();
-      setScreen('orders');
-
-      const whatsappText = [
-        '*NUOVO ORDINE - LE-SODINE*',
-        `🆔 ${order.id}`,
-        `👤 ${order.name}`,
-        `📞 ${order.phone}`,
-        `📍 ${order.address}`,
-        `🥪 ${order.items}`,
-        `💰 ${order.total}`,
-        `💳 ${order.payment}`,
-        `📝 ${order.notes}`
-      ].join('%0A');
-
-      window.open(`https://wa.me/393447513295?text=${encodeURIComponent(whatsappText)}`, '_blank');
-    }
-
-    function verifyStaff() {
-      const email = byId('staffEmail').value.trim();
-      const phone = byId('staffPhone').value.trim();
-      const validEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-      const validPhone = /^\+?[0-9\s-]{9,}$/.test(phone);
-
-      if (!validEmail && !validPhone) {
-        alert('Inserisci una email valida o un numero di telefono valido.');
-        return;
+      function getTotal() {
+        return Object.keys(cart).reduce((sum, id) => {
+          const item = menu.find(x => x.id === Number(id));
+          return sum + (item ? item.price * cart[id] : 0);
+        }, 0);
       }
 
-      state.staffVerified = true;
-      localStorage.setItem('lesodine_staff_verified', 'true');
-      closeStaffModal();
-      setScreen('staff');
-      renderStaffOrders();
-    }
+      function updateSummary() {
+        const summaryList = document.getElementById('summaryList');
+        const totalPrice = document.getElementById('totalPrice');
 
-    function saveProfileFromForm() {
-      const name = byId('customerName').value.trim();
-      const phone = byId('customerPhone').value.trim();
-      const address = byId('customerAddress').value.trim();
-      if (!name || !phone || !address) {
-        alert('Completa nome, telefono e indirizzo.');
-        return;
+        const rows = Object.keys(cart).map(id => {
+          const item = menu.find(x => x.id === Number(id));
+          if (!item) return null;
+          const qty = cart[id];
+          const subtotal = item.price * qty;
+          return `<li><span>${item.name} x${qty}</span><span>€ ${subtotal.toFixed(2)}</span></li>`;
+        }).filter(Boolean);
+
+        if (rows.length === 0) {
+          summaryList.innerHTML = '<li><span>Nessun prodotto</span><span>€ 0.00</span></li>';
+        } else {
+          summaryList.innerHTML = rows.join('');
+        }
+
+        totalPrice.textContent = `€ ${getTotal().toFixed(2)}`;
       }
 
-      state.profile = { name, phone, address, location: state.profile.location || 'GPS non disponibile' };
-      saveProfile();
-      renderProfile();
-      alert('Profilo salvato correttamente.');
-    }
-
-    function askLocation() {
-      if (!navigator.geolocation) {
-        byId('locationStatus').textContent = 'GPS non supportato';
-        return;
-      }
-
-      navigator.geolocation.getCurrentPosition(
-        position => {
-          const lat = position.coords.latitude.toFixed(5);
-          const lng = position.coords.longitude.toFixed(5);
-          state.profile.location = `${lat}, ${lng}`;
-          saveProfile();
-          byId('locationStatus').textContent = `GPS: ${lat}, ${lng}`;
-        },
-        () => {
-          byId('locationStatus').textContent = 'GPS non consentito';
-        },
-        { enableHighAccuracy: true, timeout: 15000 }
-      );
-    }
-
-    document.querySelectorAll('.qty-btn').forEach(button => {
-      button.addEventListener('click', () => {
-        const id = Number(button.dataset.id);
-        const action = button.dataset.action;
-        changeQty(id, action === 'plus' ? 1 : -1);
-      });
-    });
-
-    document.getElementById('checkoutBtn').addEventListener('click', openCheckoutModal);
-    document.getElementById('submitOrderBtn').addEventListener('click', submitOrder);
-    document.getElementById('closeCheckoutModalBtn').addEventListener('click', closeCheckoutModal);
-    document.getElementById('areaStaffBtn').addEventListener('click', () => {
-      if (state.staffVerified) {
-        setScreen('staff');
-        renderStaffOrders();
-      } else {
-        openStaffModal();
-      }
-    });
-    document.getElementById('verifyStaffBtn').addEventListener('click', verifyStaff);
-    document.getElementById('closeStaffModalBtn').addEventListener('click', closeStaffModal);
-    document.getElementById('saveProfileBtn').addEventListener('click', saveProfileFromForm);
-    document.getElementById('locBtn').addEventListener('click', askLocation);
-
-    document.querySelectorAll('.nav-item').forEach(item => {
-      item.addEventListener('click', () => {
-        const target = item.dataset.screen;
-
-        if (target === 'staff') {
-          if (!state.staffVerified) {
-            openStaffModal();
-            return;
-          }
-          setScreen('staff');
-          renderStaffOrders();
+      function openStaffPanel() {
+        const entered = prompt('Inserisci il codice staff');
+        if (entered === null) return;
+        if (entered.trim() !== STAFF_CODE) {
+          alert('Codice staff non valido');
           return;
         }
 
-        if (target === 'orders') setScreen('orders');
-        if (target === 'account') setScreen('account');
-        if (target === 'home') setScreen('home');
-      });
-    });
+        staffOpen = true;
+        document.getElementById('customerView').classList.add('hidden');
+        document.getElementById('staffView').classList.remove('hidden');
+        renderStaffOrders();
+      }
 
-    renderMenu();
-    renderOrders();
-    renderProfile();
-    renderStaffMenuEditor();
-    renderStaffOrders();
-    if (state.staffVerified) {
-      byId('areaStaffBtn').textContent = 'Staff OK';
-    }
-  </script>
-</body>
+      function closeStaffPanel() {
+        staffOpen = false;
+        document.getElementById('staffView').classList.add('hidden');
+        document.getElementById('customerView').classList.remove('hidden');
+      }
+
+      function submitOrder() {
+        const totalItems = Object.values(cart).reduce((sum, n) => sum + n, 0);
+        if (totalItems <= 0) {
+          alert('Seleziona almeno un prodotto.');
+          return;
+        }
+
+        const address = document.getElementById('address').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        if (!address || !phone) {
+          alert('Inserisci indirizzo e numero di telefono.');
+          return;
+        }
+
+        const notes = document.getElementById('notes').value.trim();
+        const payment = document.getElementById('payment').value;
+        const total = `€ ${getTotal().toFixed(2)}`;
+
+        const items = Object.keys(cart).map(id => {
+          const item = menu.find(x => x.id === Number(id));
+          if (!item) return null;
+          return `${item.name} x${cart[id]}`;
+        }).filter(Boolean).join(', ');
+
+        const order = {
+          id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          items,
+          total,
+          address,
+          phone,
+          notes: notes || 'Nessuna nota',
+          payment,
+          status: 'In attesa'
+        };
+
+        orders.unshift(order);
+        localStorage.setItem('le_sodine_orders', JSON.stringify(orders));
+
+        const message =
+          '*NUOVO ORDINE - LE SODINE*%0A' +
+          '🆔 ' + order.id + '%0A' +
+          '🥪 Prodotti: ' + order.items + '%0A' +
+          '💰 Totale: ' + order.total + '%0A' +
+          '📍 Indirizzo: ' + order.address + '%0A' +
+          '📞 Telefono: ' + order.phone + '%0A' +
+          '📝 Note: ' + order.notes + '%0A' +
+          '💳 Pagamento: ' + order.payment;
+
+        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
+
+        cart = {};
+        document.getElementById('address').value = '';
+        document.getElementById('phone').value = '';
+        document.getElementById('notes').value = '';
+        renderMenu();
+
+        alert('Ordine inviato! WhatsApp si aprirà automaticamente.');
+      }
+
+      function renderStaffOrders() {
+        const box = document.getElementById('staffOrders');
+
+        if (!orders.length) {
+          box.innerHTML = '<p style="margin:0;color:#7a6e6a;">Nessun ordine ancora.</p>';
+          return;
+        }
+
+        box.innerHTML = orders.map((order, index) => {
+          const statusClass = order.status === 'In preparazione'
+            ? 'status-preparing'
+            : order.status === 'Completato'
+              ? 'status-complete'
+              : 'status-pending';
+
+          return `
+            <div class="order-card">
+              <div class="order-head">
+                <div class="order-id">${order.id}</div>
+                <span class="status-badge ${statusClass}">${order.status}</span>
+              </div>
+              <p><strong>Prodotti:</strong> ${order.items}</p>
+              <p><strong>Totale:</strong> ${order.total}</p>
+              <p><strong>Indirizzo:</strong> ${order.address}</p>
+              <p><strong>Telefono:</strong> ${order.phone}</p>
+              <p><strong>Note:</strong> ${order.notes}</p>
+              <p><strong>Pagamento:</strong> ${order.payment}</p>
+              <div class="status-actions">
+                <button class="prep" onclick="updateOrderStatus(${index}, 'In preparazione')">Preparazione</button>
+                <button class="done" onclick="updateOrderStatus(${index}, 'Completato')">Completato</button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      function updateOrderStatus(index, status) {
+        orders[index].status = status;
+        localStorage.setItem('le_sodine_orders', JSON.stringify(orders));
+        renderStaffOrders();
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape' && staffOpen) {
+          closeStaffPanel();
+        }
+      });
+
+      renderMenu();
+      renderStaffOrders();
+    </script>
+  </body>
 </html>
