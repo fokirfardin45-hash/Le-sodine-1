@@ -641,15 +641,175 @@
         margin-top: 14px;
       }
 
+      .auth-screen {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 24px 16px;
+        background: linear-gradient(180deg, #f4eae9, #f8f2ef 100%);
+      }
+
+      .auth-box {
+        width: min(100%, 390px);
+        background: rgba(255,255,255,0.78);
+        border: 1px solid rgba(83, 50, 51, 0.08);
+        border-radius: 28px;
+        padding: 22px 18px;
+        box-shadow: 0 18px 40px rgba(46, 17, 22, 0.1);
+      }
+
+      .auth-brand {
+        text-align: center;
+        margin-bottom: 18px;
+      }
+
+      .auth-brand h1 {
+        margin: 10px 0 6px;
+        font-size: clamp(2rem, 7vw, 2.5rem);
+        letter-spacing: -0.06em;
+      }
+
+      .auth-brand p {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      .auth-tab-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-bottom: 18px;
+        background: #f3ece9;
+        border-radius: 14px;
+        padding: 6px;
+      }
+
+      .auth-tab {
+        border: none;
+        background: transparent;
+        padding: 10px 12px;
+        border-radius: 10px;
+        font-weight: 800;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .auth-tab.active {
+        background: white;
+        color: var(--primary-2);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+      }
+
+      .auth-panel {
+        display: none;
+      }
+
+      .auth-panel.active {
+        display: block;
+      }
+
+      .google-btn {
+        width: 100%;
+        background: #fff;
+        border: 1px solid rgba(0,0,0,0.08);
+        border-radius: 12px;
+        padding: 12px 14px;
+        font-weight: 800;
+        margin-bottom: 16px;
+        cursor: pointer;
+      }
+
+      .divider {
+        display: flex;
+        align-items: center;
+        color: var(--muted);
+        font-size: 0.72rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin: 12px 0;
+      }
+
+      .divider::before, .divider::after {
+        content: "";
+        flex: 1;
+        border-bottom: 1px solid rgba(36, 20, 20, 0.1);
+      }
+
+      .divider span {
+        padding: 0 10px;
+      }
+
+      .helper-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        align-items: center;
+        font-size: 0.8rem;
+        color: var(--muted);
+        margin-top: 12px;
+      }
+
       @media (min-width: 760px) {
-        .app {
-          min-height: 100vh;
-        }
+        .app { min-height: 100vh; }
       }
     </style>
   </head>
   <body>
-    <div class="app">
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-box">
+        <div class="auth-brand">
+          <div class="brand-box" style="width: 64px; height: 64px; margin: 0 auto; border-radius: 18px; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=400&q=80" alt="Le-sodine" style="width:100%; height:100%; object-fit:cover; display:block;" />
+          </div>
+          <h1>Le-sodine</h1>
+          <p>Accesso delivery e staff</p>
+        </div>
+
+        <div class="auth-tab-row">
+          <button class="auth-tab active" data-auth-tab="login" type="button">Login</button>
+          <button class="auth-tab" data-auth-tab="signup" type="button">Registrati</button>
+        </div>
+
+        <div id="loginPanel" class="auth-panel active">
+          <button class="google-btn" id="googleLoginBtn" type="button">🔵 Continua con Google</button>
+          <div class="divider"><span>oppure</span></div>
+          <div class="field">
+            <label>Email</label>
+            <input id="loginEmail" type="email" placeholder="tu@esempio.it" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input id="loginPassword" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn primary" id="loginBtn" type="button" style="width:100%; margin-top: 14px;">Accedi</button>
+          <div class="helper-row">
+            <span>Non hai un account?</span>
+            <button class="btn secondary" type="button" data-auth-tab="signup" id="switchToSignup">Registrati</button>
+          </div>
+        </div>
+
+        <div id="signupPanel" class="auth-panel">
+          <button class="google-btn" id="googleSignupBtn" type="button">🔵 Registrati con Google</button>
+          <div class="divider"><span>oppure</span></div>
+          <div class="field">
+            <label>Nome</label>
+            <input id="signupName" type="text" placeholder="Es. Marco Rossi" />
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <input id="signupEmail" type="email" placeholder="tu@esempio.it" />
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <input id="signupPassword" type="password" placeholder="••••••••" />
+          </div>
+          <button class="btn primary" id="signupBtn" type="button" style="width:100%; margin-top: 14px;">Crea account</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="app" id="mainApp" style="display:none;">
       <header class="topbar">
         <div class="topbar-inner">
           <div class="brand-wrap">
@@ -815,6 +975,36 @@
       </div>
     </div>
 
+    <div class="modal" id="staffPasswordModal">
+      <div class="modal-card">
+        <h3>Blocco staff</h3>
+        <p>Inserisci la password staff per aprire la dashboard.</p>
+        <div class="field">
+          <label>Password</label>
+          <input id="staffPasswordInput" type="password" placeholder="Inserisci password" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" id="closeStaffPasswordModalBtn" type="button">Chiudi</button>
+          <button class="btn primary" id="unlockStaffBtn" type="button">Apri</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal" id="verificationModal">
+      <div class="modal-card">
+        <h3>Verifica email</h3>
+        <p id="verificationMessage">Ti abbiamo inviato un codice di verifica al tuo indirizzo email.</p>
+        <div class="field">
+          <label>Codice</label>
+          <input id="verificationCodeInput" type="text" placeholder="Inserisci codice" />
+        </div>
+        <div class="modal-actions">
+          <button class="btn secondary" id="closeVerificationModalBtn" type="button">Chiudi</button>
+          <button class="btn primary" id="confirmVerificationBtn" type="button">Conferma</button>
+        </div>
+      </div>
+    </div>
+
     <script>
       const defaultMenu = [
         { id: 1, name: 'Prosciutto & Bufala', category: 'Panini', desc: 'Prosciutto crudo, bufala, pomodoro e basilico.', price: 8.50, img: 'https://images.unsplash.com/photo-1528735602780-2552fd4c7f8?auto=format&fit=crop&w=800&q=80' },
@@ -833,26 +1023,19 @@
         orders: JSON.parse(localStorage.getItem('lesodine_orders') || '[]'),
         profile: JSON.parse(localStorage.getItem('lesodine_profile') || '{}'),
         menu: JSON.parse(localStorage.getItem('lesodine_menu') || 'null') || defaultMenu,
-        staffVerified: localStorage.getItem('lesodine_staff_verified') === 'true'
+        staffVerified: localStorage.getItem('lesodine_staff_verified') === 'true',
+        auth: JSON.parse(localStorage.getItem('lesodine_auth') || '{}'),
+        currentUser: JSON.parse(localStorage.getItem('lesodine_current_user') || 'null')
       };
 
       const byId = (id) => document.getElementById(id);
 
-      function saveMenu() {
-        localStorage.setItem('lesodine_menu', JSON.stringify(state.menu));
-      }
-
-      function saveCart() {
-        localStorage.setItem('lesodine_cart', JSON.stringify(state.cart));
-      }
-
-      function saveProfile() {
-        localStorage.setItem('lesodine_profile', JSON.stringify(state.profile));
-      }
-
-      function saveOrders() {
-        localStorage.setItem('lesodine_orders', JSON.stringify(state.orders));
-      }
+      function saveMenu() { localStorage.setItem('lesodine_menu', JSON.stringify(state.menu)); }
+      function saveCart() { localStorage.setItem('lesodine_cart', JSON.stringify(state.cart)); }
+      function saveProfile() { localStorage.setItem('lesodine_profile', JSON.stringify(state.profile)); }
+      function saveOrders() { localStorage.setItem('lesodine_orders', JSON.stringify(state.orders)); }
+      function saveAuth() { localStorage.setItem('lesodine_auth', JSON.stringify(state.auth)); }
+      function saveCurrentUser() { localStorage.setItem('lesodine_current_user', JSON.stringify(state.currentUser)); }
 
       function formatMoney(value) {
         return `€ ${Number(value).toFixed(2)}`;
@@ -1018,6 +1201,35 @@
         byId('staffModal').classList.remove('open');
       }
 
+      function openStaffPasswordModal() {
+        byId('staffPasswordModal').classList.add('open');
+      }
+
+      function closeStaffPasswordModal() {
+        byId('staffPasswordModal').classList.remove('open');
+      }
+
+      function openVerificationModal(email) {
+        byId('verificationMessage').textContent = `Ti abbiamo inviato un codice di verifica a ${email}. (Versione demo: salva il codice mostrato in alert)`;
+        byId('verificationModal').classList.add('open');
+      }
+
+      function closeVerificationModal() {
+        byId('verificationModal').classList.remove('open');
+      }
+
+      function generateVerificationCode() {
+        return String(Math.floor(100000 + Math.random() * 900000));
+      }
+
+      function sendVerificationToUser(email) {
+        const code = generateVerificationCode();
+        localStorage.setItem('lesodine_verification_code', code);
+        localStorage.setItem('lesodine_verification_email', email);
+        alert(`Codice di verifica (demo): ${code}\nIn una vera app, questo codice arriverebbe via Gmail/SMTP.`);
+        openVerificationModal(email);
+      }
+
       function openCheckoutModal() {
         const total = getTotalCart();
         if (total <= 0) {
@@ -1066,12 +1278,7 @@
         };
 
         state.orders.unshift(order);
-        state.profile = {
-          ...state.profile,
-          name,
-          phone,
-          address
-        };
+        state.profile = { ...state.profile, name, phone, address };
         state.cart = {};
         saveProfile();
         saveOrders();
@@ -1082,6 +1289,9 @@
         renderMenu();
         renderProfile();
         setScreen('orders');
+
+        const waNumber = '3447513295';
+        alert(`Ordine inviato automaticamente a WhatsApp ${waNumber} (demo).\nIn una vera app, questo passa tramite API server-side.`);
       }
 
       function saveProfileFromForm() {
@@ -1092,6 +1302,65 @@
         saveProfile();
         renderProfile();
         alert('Profilo salvato con successo.');
+      }
+
+      function switchAuthTab(tabName) {
+        document.querySelectorAll('.auth-tab').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.authTab === tabName);
+        });
+        byId('loginPanel').classList.toggle('active', tabName === 'login');
+        byId('signupPanel').classList.toggle('active', tabName === 'signup');
+      }
+
+      function handleLogin(email, password) {
+        const users = state.auth.users || {};
+        const user = users[email.toLowerCase()];
+
+        if (!user) {
+          alert('Account non trovato. Registrati prima.');
+          return;
+        }
+
+        if (user.password !== password) {
+          alert('Password errata.');
+          return;
+        }
+
+        if (!user.verified) {
+          alert('Email non verificata. Verifica prima di accedere.');
+          sendVerificationToUser(email);
+          return;
+        }
+
+        state.currentUser = { email: user.email, name: user.name };
+        saveCurrentUser();
+        byId('authScreen').style.display = 'none';
+        byId('mainApp').style.display = 'block';
+        state.profile = { ...state.profile, name: user.name, email: user.email };
+        saveProfile();
+        renderProfile();
+      }
+
+      function handleSignup(name, email, password) {
+        const db = state.auth.users || {};
+        const lower = email.toLowerCase();
+
+        if (db[lower]) {
+          alert('Questo account esiste già. Effettua il login.');
+          switchAuthTab('login');
+          return;
+        }
+
+        db[lower] = {
+          name,
+          email: lower,
+          password,
+          verified: false
+        };
+
+        state.auth.users = db;
+        saveAuth();
+        sendVerificationToUser(lower);
       }
 
       document.addEventListener('click', (event) => {
@@ -1142,12 +1411,37 @@
         }
 
         if (event.target.closest('#areaStaffBtn')) {
-          openStaffModal();
+          openStaffPasswordModal();
           return;
         }
 
         if (event.target.closest('#closeStaffModalBtn')) {
           closeStaffModal();
+          return;
+        }
+
+        if (event.target.closest('#closeVerificationModalBtn')) {
+          closeVerificationModal();
+          return;
+        }
+
+        if (event.target.closest('#confirmVerificationBtn')) {
+          const entered = byId('verificationCodeInput').value.trim();
+          const validCode = localStorage.getItem('lesodine_verification_code');
+          if (entered === validCode) {
+            const userEmail = localStorage.getItem('lesodine_verification_email');
+            const users = state.auth.users || {};
+            if (users[userEmail]) {
+              users[userEmail].verified = true;
+              state.auth.users = users;
+              saveAuth();
+              closeVerificationModal();
+              alert('Email verificata con successo.');
+              handleLogin(userEmail, users[userEmail].password);
+            }
+          } else {
+            alert('Codice errato.');
+          }
           return;
         }
 
@@ -1164,6 +1458,72 @@
           localStorage.setItem('lesodine_staff_verified', 'true');
           closeStaffModal();
           setScreen('staff');
+          return;
+        }
+
+        if (event.target.closest('#loginBtn')) {
+          const email = byId('loginEmail').value.trim();
+          const password = byId('loginPassword').value.trim();
+          if (!email || !password) {
+            alert('Inserisci email e password.');
+            return;
+          }
+          handleLogin(email, password);
+          return;
+        }
+
+        if (event.target.closest('#signupBtn')) {
+          const name = byId('signupName').value.trim();
+          const email = byId('signupEmail').value.trim();
+          const password = byId('signupPassword').value.trim();
+          if (!name || !email || !password) {
+            alert('Compila tutti i campi.');
+            return;
+          }
+          handleSignup(name, email, password);
+          return;
+        }
+
+        if (event.target.closest('#googleLoginBtn') || event.target.closest('#googleSignupBtn')) {
+          const googleName = 'Google User';
+          const googleEmail = 'google.user@lesodine.it';
+          const googlePassword = 'google123';
+          const users = state.auth.users || {};
+          if (!users[googleEmail]) {
+            users[googleEmail] = { name: googleName, email: googleEmail, password: googlePassword, verified: true };
+            state.auth.users = users;
+            saveAuth();
+          }
+          state.currentUser = { email: googleEmail, name: googleName };
+          saveCurrentUser();
+          byId('authScreen').style.display = 'none';
+          byId('mainApp').style.display = 'block';
+          state.profile = { ...state.profile, name: googleName, email: googleEmail };
+          saveProfile();
+          renderProfile();
+          return;
+        }
+
+        if (event.target.closest('#unlockStaffBtn')) {
+          const value = byId('staffPasswordInput').value.trim();
+          if (value === '45800') {
+            closeStaffPasswordModal();
+            setScreen('staff');
+            return;
+          }
+          alert('Password errata.');
+          return;
+        }
+
+        if (event.target.closest('#closeStaffPasswordModalBtn')) {
+          closeStaffPasswordModal();
+          return;
+        }
+
+        if (event.target.closest('[data-auth-tab]')) {
+          const btn = event.target.closest('[data-auth-tab]');
+          switchAuthTab(btn.dataset.authTab);
+          return;
         }
       });
 
@@ -1173,12 +1533,27 @@
         });
       });
 
+      function bootstrapAuth() {
+        const current = state.currentUser;
+        if (current) {
+          byId('authScreen').style.display = 'none';
+          byId('mainApp').style.display = 'block';
+          state.profile = { ...state.profile, name: current.name || state.profile.name, email: current.email || state.profile.email };
+          saveProfile();
+          renderProfile();
+        } else {
+          byId('authScreen').style.display = 'flex';
+          byId('mainApp').style.display = 'none';
+        }
+      }
+
       renderMenu();
       renderOrders();
       renderProfile();
       renderStaffMenuEditor();
       renderStaffOrders();
       setScreen('home');
+      bootstrapAuth();
     </script>
   </body>
 </html>
