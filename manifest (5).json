@@ -1,0 +1,12 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "fokirfardin45-hash.github",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "Le-sodine",
+  "start_url": "/",
+  "theme_color": "#ffffff",
+  "id": "Com.le-sodine"
+}
