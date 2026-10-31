@@ -1,695 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PWA Score UI</title>
+  <style>
+    * { box-sizing: border-box; }
 
-        justify-content: center;
-        align-items: flex-start;
-        color: var(--text);
-      }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", sans-serif;
+      background: #dfeaf1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
 
-      .app {
-        width: 100%;
-        max-width: 450px;
-        min-height: 100vh;
-        background: var(--bg);
-        position: relative;
-        box-shadow: 0 0 0 1px rgba(0,0,0,0.04);
-        padding-bottom: calc(var(--bottom-nav-h) + 26px);
-      }
+    .scene {
+      position: relative;
+      width: 1280px;
+      height: 760px;
+      background: linear-gradient(180deg, #dfeaf1 0%, #d2e1eb 100%);
+      overflow: hidden;
+      border-radius: 0;
+    }
 
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 10;
-        background: rgba(35, 30, 30, 0.92);
-        backdrop-filter: blur(8px);
-        color: #fff;
-        padding: 14px 16px 12px;
-        border-bottom: 1px solid rgba(255,255,255,0.08);
-      }
+    .bg-orb {
+      position: absolute;
+      width: 980px;
+      height: 980px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.18);
+      left: -300px;
+      top: -220px;
+      filter: blur(2px);
+    }
 
-      .topbar-inner {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
+    .topbar {
+      position: absolute;
+      left: 60px;
+      top: 30px;
+    }
 
-      .brand-wrap {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        flex: 1;
-        min-width: 0;
-      }
+    .title {
+      font-size: 72px;
+      font-weight: 700;
+      color: #2f3947;
+      letter-spacing: -2px;
+      margin: 0;
+      line-height: 1;
+    }
 
-      .brand-box {
-        width: 38px;
-        height: 38px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        background: linear-gradient(135deg, #f5d7dd, #d5d7db);
-        color: var(--primary-2);
-        font-size: 1.2rem;
-        overflow: hidden;
-        flex-shrink: 0;
-      }
+    .sub {
+      margin-top: 18px;
+      font-size: 42px;
+      color: #3a4654;
+      font-weight: 400;
+      letter-spacing: -1px;
+    }
 
-      .brand-box img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        display: block;
-      }
+    .score-row {
+      position: absolute;
+      top: 190px;
+      left: 80px;
+      display: flex;
+      gap: 110px;
+      align-items: flex-start;
+    }
 
-      .brand-text {
-        font-size: 0.86rem;
-        color: rgba(255,255,255,0.7);
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    .score-card {
+      width: 260px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
 
-      .brand-text strong {
-        display: block;
-        color: #fff;
-        font-size: 1rem;
-      }
+    .ring {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: radial-gradient(circle at center, #f6f1f0 0%, #f6f1f0 56%, #e9d4d1 56%, #e9d4d1 58%, #f5f4f2 58%, #f5f4f2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 10px rgba(255,255,255,0.12);
+    }
 
-      .staff-btn {
-        border: 0;
-        border-radius: 12px;
-        background: linear-gradient(135deg, #ffb174, #f98752);
-        color: #311b17;
-        font-weight: 700;
-        padding: 8px 12px;
-        font-size: 0.77rem;
-        cursor: pointer;
-      }
+    .ring::before {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      border-radius: 50%;
+      background: conic-gradient(
+        #f26d6d 0deg 260deg,
+        #f1d4d0 260deg 360deg
+      );
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 0);
+              mask: radial-gradient(farthest-side, transparent calc(100% - 18px), #000 0);
+    }
 
-      .page {
-        padding: 16px 14px 28px;
-      }
+    .ring-value {
+      position: absolute;
+      font-size: 46px;
+      font-weight: 700;
+      color: #3b4658;
+      letter-spacing: -2px;
+      z-index: 2;
+    }
 
-      .hero {
-        background: linear-gradient(135deg, #b62d5d, #8b2148);
-        color: #fff;
-        border-radius: 26px;
-        padding: 18px 16px;
-        box-shadow: var(--shadow);
-        margin-bottom: 16px;
-      }
+    .ring-value span {
+      font-size: 26px;
+      color: #3b4658;
+      opacity: 0.9;
+    }
 
-      .hero h1 {
-        margin: 0 0 8px;
-        font-size: 1.55rem;
-        line-height: 1.15;
-      }
+    .card-label {
+      font-size: 32px;
+      color: #3d4a57;
+      font-weight: 400;
+      letter-spacing: -1px;
+      text-align: center;
+    }
 
-      .hero p {
-        margin: 0;
-        font-size: 0.88rem;
-        line-height: 1.5;
-        color: rgba(255,255,255,0.9);
-      }
+    .alert {
+      position: relative;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: #f0a3a3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.15);
+    }
 
-      .chip-row {
-        display: flex;
-        gap: 8px;
-        flex-wrap: wrap;
-        margin: 18px 0 12px;
-      }
+    .alert::before {
+      content: "!";
+      font-size: 120px;
+      font-weight: 700;
+      color: rgba(255,255,255,0.92);
+      line-height: 1;
+      transform: translateY(-8px);
+    }
 
-      .chip {
-        border: 1px solid rgba(182,45,93,0.17);
-        border-radius: 999px;
-        padding: 8px 10px;
-        background: rgba(255,255,255,0.75);
-        font-size: 0.75rem;
-        color: var(--primary-2);
-        font-weight: 700;
-      }
+    .moon {
+      position: absolute;
+      right: 80px;
+      bottom: 40px;
+      width: 420px;
+      height: 240px;
+      border-radius: 50% 50% 0 0;
+      background: rgb(239, 245, 247);
+      box-shadow: inset 0 0 0 12px rgba(255,255,255,0.35);
+      transform: rotate(8deg);
+    }
 
-      .section {
-        background: var(--panel);
-        border-radius: var(--radius);
-        padding: 14px 12px;
-        box-shadow: 0 8px 18px rgba(44, 29, 26, 0.04);
-        margin-bottom: 16px;
-      }
+    .moon::before {
+      content: "";
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      background: rgba(255,255,255,0.9);
+      border-radius: 50%;
+      left: 120px;
+      top: 30px;
+      box-shadow:
+        50px 10px 0 10px rgba(255,255,255,0.7),
+        -40px 30px 0 6px rgba(255,255,255,0.75),
+        18px 65px 0 18px rgba(255,255,255,0.8);
+    }
 
-      .section-title {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        margin-bottom: 12px;
-      }
+    .mascot-wrap {
+      position: absolute;
+      right: 280px;
+      bottom: 80px;
+      width: 300px;
+      height: 260px;
+    }
 
-      .section-title h2 {
-        margin: 0;
-        font-size: 1.05rem;
-      }
+    .body {
+      position: absolute;
+      left: 54px;
+      bottom: 0;
+      width: 170px;
+      height: 180px;
+      background: #dfe9f4;
+      border-radius: 60px 60px 30px 30px;
+      border: 4px solid rgba(117, 148, 165, 0.35);
+      transform: translateY(18px);
+      z-index: 2;
+    }
 
-      .tiny {
-        font-size: 0.72rem;
-        color: var(--muted);
-      }
+    .helmet {
+      position: absolute;
+      left: 42px;
+      top: 18px;
+      width: 185px;
+      height: 110px;
+      border-radius: 50% 50% 45% 45%;
+      background: #dceaf7;
+      border: 4px solid rgba(117, 148, 165, 0.35);
+      z-index: 3;
+    }
 
-      .menu-list {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
+    .helmet::before {
+      content: "";
+      position: absolute;
+      left: 28px;
+      top: 18px;
+      width: 130px;
+      height: 80px;
+      border-radius: 50%;
+      background: #caa87d;
+      box-shadow: inset 0 0 0 6px rgba(148, 113, 76, 0.4);
+    }
 
-      .menu-item {
-        display: flex;
-        align-items: center;
-        background: var(--white);
-        border-radius: var(--soft-radius);
-        padding: 10px;
-        box-shadow: 0 8px 18px rgba(42,29,26,0.05);
-      }
+    .face {
+      position: absolute;
+      left: 68px;
+      top: 38px;
+      width: 90px;
+      height: 90px;
+      background: #b98d64;
+      border-radius: 50%;
+      z-index: 4;
+      box-shadow: inset 0 0 0 6px rgba(136, 96, 66, 0.3);
+    }
 
-      .menu-item img {
-        width: 78px;
-        height: 78px;
-        object-fit: cover;
-        border-radius: 14px;
-        flex-shrink: 0;
-      }
+    .face::before, .face::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #2b2b2b;
+      top: 32px;
+    }
 
-      .menu-info {
-        flex: 1;
-        min-width: 0;
-        margin-left: 12px;
-      }
+    .face::before { left: 22px; }
+    .face::after { right: 22px; }
 
-      .menu-info h3 {
-        margin: 0 0 4px;
-        font-size: 0.96rem;
-      }
+    .arm-left, .arm-right {
+      position: absolute;
+      width: 24px;
+      height: 120px;
+      background: #dfe9f4;
+      border-radius: 20px;
+      top: 90px;
+      z-index: 1;
+    }
 
-      .menu-info p {
-        margin: 0 0 8px;
-        color: var(--muted);
-        font-size: 0.76rem;
-        line-height: 1.4;
-      }
+    .arm-left { left: 20px; transform: rotate(20deg); }
+    .arm-right { right: 20px; transform: rotate(-20deg); }
 
-      .menu-row {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 8px;
-      }
+    .hand {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      background: #d6ae88;
+      border-radius: 50%;
+      bottom: 40px;
+      z-index: 5;
+    }
 
-      .price {
-        color: var(--primary);
-        font-weight: 700;
-        font-size: 1.02rem;
-      }
+    .hand.left { left: 2px; }
+    .hand.right { right: 2px; }
 
-      .qty-box {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        padding: 4px 6px;
-        border-radius: 999px;
-        background: #f7ecef;
-      }
+    .flag {
+      position: absolute;
+      right: 0;
+      top: 48px;
+      width: 110px;
+      height: 80px;
+      background: linear-gradient(90deg, #0f5eb4, #0e3f90);
+      clip-path: polygon(0 0, 100% 20%, 100% 100%, 0 80%);
+      border-radius: 6px;
+      box-shadow: 0 0 0 2px rgba(255,255,255,0.2);
+      z-index: 6;
+    }
 
-      .qty-btn {
-        width: 26px;
-        height: 26px;
-        border: 0;
-        border-radius: 50%;
-        background: var(--primary);
-        color: #fff;
-        font-weight: 700;
-        cursor: pointer;
-      }
+    .flag::before {
+      content: "PWA";
+      position: absolute;
+      left: 16px;
+      top: 18px;
+      color: #fff;
+      font-weight: 800;
+      font-size: 24px;
+      letter-spacing: -1px;
+    }
 
-      .qty-value {
-        min-width: 18px;
-        text-align: center;
-        font-weight: 700;
-        color: var(--primary-2);
-      }
+    .flag::after {
+      content: "builder";
+      position: absolute;
+      left: 18px;
+      top: 46px;
+      color: #fff;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: lowercase;
+      opacity: 0.9;
+    }
 
-      .summary-box {
-        background: #fff;
-        border-radius: 18px;
-        padding: 14px 12px;
-        border: 1px dashed rgba(182,45,93,0.35);
-      }
+    .logo {
+      position: absolute;
+      left: 40px;
+      bottom: 34px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      z-index: 10;
+    }
 
-      .summary-list {
-        list-style: none;
-        padding: 0;
-        margin: 0 0 12px;
-        display: flex;
-        flex-direction: column;
-        gap: 6px;
-        color: var(--text);
-        font-size: 0.82rem;
-      }
+    .owl {
+      width: 110px;
+      height: 90px;
+      position: relative;
+      background: #5a3591;
+      border-radius: 50px 50px 60px 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: inset 0 0 0 8px rgba(255,255,255,0.12);
+    }
 
-      .summary-list li {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-      }
+    .owl::before,
+    .owl::after {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #f3d1b7;
+      top: 24px;
+    }
 
-      .summary-total {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding-top: 12px;
-        border-top: 1px solid rgba(0,0,0,0.08);
-        font-weight: 700;
-      }
+    .owl::before { left: 32px; }
+    .owl::after { right: 32px; }
 
-      .form-group {
-        margin-top: 12px;
-      }
+    .owl .beak {
+      position: absolute;
+      width: 18px;
+      height: 16px;
+      background: #f1c993;
+      clip-path: polygon(50% 100%, 0 0, 100% 0);
+      bottom: 18px;
+    }
 
-      .form-group label {
-        display: block;
-        margin-bottom: 6px;
-        font-size: 0.72rem;
-        color: var(--muted);
-        font-weight: 700;
-        text-transform: uppercase;
-      }
+    .brand {
+      font-size: 72px;
+      font-weight: 900;
+      line-height: 0.8;
+      color: #2c2d31;
+      letter-spacing: -3px;
+    }
 
-      .form-group input,
-      .form-group textarea,
-      .form-group select {
-        width: 100%;
-        border: 1px solid rgba(42,29,26,0.12);
-        border-radius: 12px;
-        background: #fff;
-        padding: 11px 12px;
-        font-size: 0.92rem;
-        color: var(--text);
-        resize: vertical;
-      }
+    .brand small {
+      display: block;
+      font-size: 24px;
+      letter-spacing: 1px;
+      font-weight: 700;
+      color: #2b2d31;
+      margin-top: 2px;
+      text-transform: lowercase;
+    }
 
-      textarea {
-        min-height: 72px;
-      }
+    .brand .pwa {
+      display: block;
+    }
 
-      .primary-btn {
-        width: 100%;
-        border: 0;
-        background: linear-gradient(135deg, #b62d5d, #8b2148);
-        color: #fff;
-        border-radius: 16px;
-        padding: 14px 16px;
-        margin-top: 14px;
-        font-size: 1rem;
-        font-weight: 700;
-        cursor: pointer;
-      }
+    .brand .builder {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="scene">
+    <div class="bg-orb"></div>
 
-      .hidden {
-        display: none !important;
-      }
-
-      .staff-panel {
-        background: #fff;
-        border-radius: 24px;
-        padding: 14px 12px;
-        box-shadow: 0 8px 18px rgba(44,29,26,0.04);
-      }
-
-      .order-card {
-        background: #fff7f8;
-        border: 1px solid rgba(182,45,93,0.12);
-        border-radius: 18px;
-        padding: 12px;
-        margin-bottom: 12px;
-      }
-
-      .order-head {
-        display: flex;
-        justify-content: space-between;
-        gap: 8px;
-        align-items: center;
-        margin-bottom: 8px;
-      }
-
-      .order-id {
-        font-weight: 700;
-        font-size: 0.9rem;
-      }
-
-      .status-badge {
-        border-radius: 999px;
-        padding: 5px 8px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: #fff;
-      }
-
-      .status-pending { background: var(--warn); }
-      .status-preparing { background: #2a7de1; }
-      .status-complete { background: var(--success); }
-
-      .order-card p {
-        margin: 3px 0;
-        color: var(--text);
-        font-size: 0.76rem;
-        line-height: 1.45;
-      }
-
-      .status-actions {
-        display: flex;
-        gap: 8px;
-        margin-top: 10px;
-      }
-
-      .status-actions button {
-        flex: 1;
-        border: 0;
-        border-radius: 10px;
-        padding: 8px 6px;
-        font-weight: 700;
-        cursor: pointer;
-        color: #fff;
-      }
-
-      .prep { background: #2a7de1; }
-      .done { background: var(--success); }
-
-      @media (max-width: 380px) {
-        .topbar-inner {
-          gap: 8px;
-        }
-
-        .brand-text {
-          font-size: 0.75rem;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="app">
-      <header class="topbar">
-        <div class="topbar-inner">
-          <div class="brand-wrap">
-            <div class="brand-box">🥪</div>
-            <div class="brand-text">
-              <strong>Le-sodine</strong>
-              Panini • Kebab • Delivery
-            </div>
-          </div>
-          <button class="staff-btn" onclick="openStaffPanel()">Staff</button>
-        </div>
-      </header>
-
-      <main class="page">
-        <section id="customerView">
-          <div class="hero">
-            <h1>Ordina subito</h1>
-            <p>Panini artigianali, kebab, bibite e consegna veloce a Morolo, Supino e Ferentino.</p>
-          </div>
-
-          <div class="chip-row">
-            <div class="chip">🍔 Panini</div>
-            <div class="chip">🥙 Kebab</div>
-            <div class="chip">🥤 Bevande</div>
-            <div class="chip">🚚 Consegna</div>
-          </div>
-
-          <section class="section">
-            <div class="section-title">
-              <h2>Menù</h2>
-              <span class="tiny">Tutto freschissimo</span>
-            </div>
-            <div class="menu-list" id="menuList"></div>
-          </section>
-
-          <section class="section">
-            <div class="section-title">
-              <h2>Riepilogo ordine</h2>
-            </div>
-            <div class="summary-box">
-              <ul class="summary-list" id="summaryList"></ul>
-              <div class="summary-total">
-                <span>Totale</span>
-                <span id="totalPrice">€ 0.00</span>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="address">Indirizzo consegna</label>
-              <input id="address" type="text" placeholder="Via ..., numero, città o GPS" />
-            </div>
-
-            <div class="form-group">
-              <label for="phone">Telefono</label>
-              <input id="phone" type="tel" placeholder="+39 ..." />
-            </div>
-
-            <div class="form-group">
-              <label for="notes">Note</label>
-              <textarea id="notes" placeholder="Senza maionese, citofono, piano, ecc."></textarea>
-            </div>
-
-            <div class="form-group">
-              <label for="payment">Pagamento</label>
-              <select id="payment">
-                <option>Contanti alla consegna</option>
-                <option>Pagamento online</option>
-              </select>
-            </div>
-
-            <button class="primary-btn" onclick="submitOrder()">Invia ordine su WhatsApp</button>
-          </section>
-        </section>
-
-        <section id="staffView" class="hidden">
-          <div class="staff-panel">
-            <div class="section-title">
-              <h2>Dashboard staff</h2>
-              <span class="tiny">Codice: 45800</span>
-            </div>
-            <div id="staffOrders"></div>
-          </div>
-        </section>
-      </main>
+    <div class="topbar">
+      <div class="title">Le-sodine</div>
+      <div class="sub">PWA Score</div>
     </div>
 
-    <script>
-      const STAFF_CODE = '45800';
-      const WHATSAPP_NUMBER = '393447513295';
+    <div class="score-row">
+      <div class="score-card">
+        <div class="ring">
+          <div class="ring-value">16 <span>/ 46</span></div>
+        </div>
+        <div class="card-label">Manifest</div>
+      </div>
 
-      const menu = [
-        { id: 1, name: 'Panino Prosciutto', desc: 'Prosciutto, mozzarella, pomodoro e rucola', price: 6.5, image: 'https://images.unsplash.com/photo-1528735602780-2552fd4a5f5e?auto=format&fit=crop&w=800&q=80' },
-        { id: 2, name: 'Panino Diavola', desc: 'Salame piccante, provola e rucola', price: 7.0, image: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80' },
-        { id: 3, name: 'Panino Vegetariano', desc: 'Verdure grigliate, scamorza e basilico', price: 6.0, image: 'https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=80' },
-        { id: 4, name: 'Panino Porchetta', desc: 'Porchetta, patate e maionese', price: 7.5, image: 'https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80' },
-        { id: 5, name: 'Kebab Classico', desc: 'Carne, insalata, cipolla e salsa', price: 8.0, image: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80' },
-        { id: 6, name: 'Kebab Speciale', desc: 'Carne, cheddar, patatine e salsa', price: 9.0, image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80' },
-        { id: 7, name: 'Acqua', desc: '500 ml', price: 1.5, image: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=800&q=80' },
-        { id: 8, name: 'Coca Cola', desc: '330 ml', price: 2.5, image: 'https://images.unsplash.com/photo-1622483767028-3f66f2b7420a?auto=format&fit=crop&w=800&q=80' }
-      ];
+      <div class="score-card">
+        <div class="alert"></div>
+        <div class="card-label">Service Worker</div>
+      </div>
 
-      let cart = {};
-      let orders = JSON.parse(localStorage.getItem('le_sodine_orders') || '[]');
-      let staffOpen = false;
+      <div class="score-card">
+        <div class="alert"></div>
+        <div class="card-label">App Capabilities</div>
+      </div>
+    </div>
 
-      function renderMenu() {
-        const list = document.getElementById('menuList');
-        list.innerHTML = menu.map(item => {
-          const qty = cart[item.id] || 0;
-          return `
-            <div class="menu-item">
-              <img src="${item.image}" alt="${item.name}" />
-              <div class="menu-info">
-                <h3>${item.name}</h3>
-                <p>${item.desc}</p>
-                <div class="menu-row">
-                  <span class="price">€ ${item.price.toFixed(2)}</span>
-                  <div class="qty-box">
-                    <button class="qty-btn" onclick="changeQty(${item.id}, -1)">-</button>
-                    <span class="qty-value">${qty}</span>
-                    <button class="qty-btn" onclick="changeQty(${item.id}, 1)">+</button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          `;
-        }).join('');
+    <div class="logo">
+      <div class="owl">
+        <div class="beak"></div>
+      </div>
+      <div class="brand">
+        <span class="pwa">PWA</span>
+        <span class="builder">builder</span>
+      </div>
+    </div>
 
-        updateSummary();
-      }
+    <div class="moon"></div>
 
-      function changeQty(id, delta) {
-        cart[id] = (cart[id] || 0) + delta;
-        if (cart[id] < 0) cart[id] = 0;
-        if (cart[id] === 0) delete cart[id];
-        renderMenu();
-      }
+    <div class="mascot-wrap">
+      <div class="arm-left"></div>
+      <div class="arm-right"></div>
+      <div class="hand left"></div>
+      <div class="hand right"></div>
 
-      function getTotal() {
-        return Object.keys(cart).reduce((sum, id) => {
-          const item = menu.find(x => x.id === Number(id));
-          return sum + (item ? item.price * cart[id] : 0);
-        }, 0);
-      }
+      <div class="helmet"></div>
+      <div class="face"></div>
+      <div class="body"></div>
 
-      function updateSummary() {
-        const summaryList = document.getElementById('summaryList');
-        const totalPrice = document.getElementById('totalPrice');
-
-        const rows = Object.keys(cart).map(id => {
-          const item = menu.find(x => x.id === Number(id));
-          if (!item) return null;
-          const qty = cart[id];
-          const subtotal = item.price * qty;
-          return `<li><span>${item.name} x${qty}</span><span>€ ${subtotal.toFixed(2)}</span></li>`;
-        }).filter(Boolean);
-
-        if (rows.length === 0) {
-          summaryList.innerHTML = '<li><span>Nessun prodotto</span><span>€ 0.00</span></li>';
-        } else {
-          summaryList.innerHTML = rows.join('');
-        }
-
-        totalPrice.textContent = `€ ${getTotal().toFixed(2)}`;
-      }
-
-      function openStaffPanel() {
-        const entered = prompt('Inserisci il codice staff');
-        if (entered === null) return;
-        if (entered.trim() !== STAFF_CODE) {
-          alert('Codice staff non valido');
-          return;
-        }
-
-        staffOpen = true;
-        document.getElementById('customerView').classList.add('hidden');
-        document.getElementById('staffView').classList.remove('hidden');
-        renderStaffOrders();
-      }
-
-      function closeStaffPanel() {
-        staffOpen = false;
-        document.getElementById('staffView').classList.add('hidden');
-        document.getElementById('customerView').classList.remove('hidden');
-      }
-
-      function submitOrder() {
-        const totalItems = Object.values(cart).reduce((sum, n) => sum + n, 0);
-        if (totalItems <= 0) {
-          alert('Seleziona almeno un prodotto.');
-          return;
-        }
-
-        const address = document.getElementById('address').value.trim();
-        const phone = document.getElementById('phone').value.trim();
-        if (!address || !phone) {
-          alert('Inserisci indirizzo e numero di telefono.');
-          return;
-        }
-
-        const notes = document.getElementById('notes').value.trim();
-        const payment = document.getElementById('payment').value;
-        const total = `€ ${getTotal().toFixed(2)}`;
-
-        const items = Object.keys(cart).map(id => {
-          const item = menu.find(x => x.id === Number(id));
-          if (!item) return null;
-          return `${item.name} x${cart[id]}`;
-        }).filter(Boolean).join(', ');
-
-        const order = {
-          id: 'ORD-' + Math.floor(1000 + Math.random() * 9000),
-          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          items,
-          total,
-          address,
-          phone,
-          notes: notes || 'Nessuna nota',
-          payment,
-          status: 'In attesa'
-        };
-
-        orders.unshift(order);
-        localStorage.setItem('le_sodine_orders', JSON.stringify(orders));
-
-        const message =
-          '*NUOVO ORDINE - LE SODINE*%0A' +
-          '🆔 ' + order.id + '%0A' +
-          '🥪 Prodotti: ' + order.items + '%0A' +
-          '💰 Totale: ' + order.total + '%0A' +
-          '📍 Indirizzo: ' + order.address + '%0A' +
-          '📞 Telefono: ' + order.phone + '%0A' +
-          '📝 Note: ' + order.notes + '%0A' +
-          '💳 Pagamento: ' + order.payment;
-
-        window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${message}`, '_blank');
-
-        cart = {};
-        document.getElementById('address').value = '';
-        document.getElementById('phone').value = '';
-        document.getElementById('notes').value = '';
-        renderMenu();
-
-        alert('Ordine inviato! WhatsApp si aprirà automaticamente.');
-      }
-
-      function renderStaffOrders() {
-        const box = document.getElementById('staffOrders');
-
-        if (!orders.length) {
-          box.innerHTML = '<p style="margin:0;color:#7a6e6a;">Nessun ordine ancora.</p>';
-          return;
-        }
-
-        box.innerHTML = orders.map((order, index) => {
-          const statusClass = order.status === 'In preparazione'
-            ? 'status-preparing'
-            : order.status === 'Completato'
-              ? 'status-complete'
-              : 'status-pending';
-
-          return `
-            <div class="order-card">
-              <div class="order-head">
-                <div class="order-id">${order.id}</div>
-                <span class="status-badge ${statusClass}">${order.status}</span>
-              </div>
-              <p><strong>Prodotti:</strong> ${order.items}</p>
-              <p><strong>Totale:</strong> ${order.total}</p>
-              <p><strong>Indirizzo:</strong> ${order.address}</p>
-              <p><strong>Telefono:</strong> ${order.phone}</p>
-              <p><strong>Note:</strong> ${order.notes}</p>
-              <p><strong>Pagamento:</strong> ${order.payment}</p>
-              <div class="status-actions">
-                <button class="prep" onclick="updateOrderStatus(${index}, 'In preparazione')">Preparazione</button>
-                <button class="done" onclick="updateOrderStatus(${index}, 'Completato')">Completato</button>
-              </div>
-            </div>
-          `;
-        }).join('');
-      }
-
-      function updateOrderStatus(index, status) {
-        orders[index].status = status;
-        localStorage.setItem('le_sodine_orders', JSON.stringify(orders));
-        renderStaffOrders();
-      }
-
-      document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && staffOpen) {
-          closeStaffPanel();
-        }
-      });
-
-      renderMenu();
-      renderStaffOrders();
-    </script>
-  </body>
+      <div class="flag"></div>
+    </div>
+  </div>
+</body>
 </html>
