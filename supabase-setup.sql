@@ -1,12 +1,12 @@
 -- Le Sodine cloud setup for Supabase. Run the entire file in Supabase Dashboard > SQL Editor.
--- Then replace YOUR_STAFF_EMAIL@example.com below with the staff login email before running.
+-- Then replace fokirfardin45@example.com below with the staff login email before running.
 create extension if not exists pgcrypto;
 
 create table if not exists public.staff_emails (
   email text primary key check (email = lower(email))
 );
 -- Replace this value with your own staff email, then run this INSERT separately if needed:
-insert into public.staff_emails(email) values ('YOUR_STAFF_EMAIL@example.com') on conflict do nothing;
+insert into public.staff_emails(email) values ('fokirfardin45@gamil.com') on conflict do nothing;
 
 create or replace function public.is_staff()
 returns boolean
