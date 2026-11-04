@@ -2,13 +2,93 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#ea580c" />
-  <meta name="description" content="Le-sodine food ordering and delivery app" />
+  <meta name="description" content="Order food from Le-sodine." />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <link rel="manifest" href="./manifest.json" />
   <link rel="icon" href="./icons/icon-192.svg" type="image/svg+xml" />
   <link rel="apple-touch-icon" href="./icons/icon-192.svg" />
-  <title>Le Sodine</title>
+  <title>Le-sodine | Food ordering</title>
   <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px Arial, sans-serif; background: #fffaf5; color: #1f2937; }
+    header { position: sticky; top: 0; z-index: 2; background: #fff; border-bottom: 1px solid #eee; }
+    .bar, main { width: min(1100px, 100%); margin: auto; padding: 16px; }
+    .bar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .brand { color: #ea580c; font-size: 26px; font-weight: 800; }
+    nav { display: flex; gap: 8px; flex-wrap: wrap; }
+    button { border: 0; border-radius: 9px; padding: 11px 15px; cursor: pointer; font-weight: 700; }
+    nav button, .secondary { background: #fff; color: #374151; border: 1px solid #e5e7eb; }
+    nav button.active, .primary { color: #fff; background: #ea580c; }
+    .layout { display: grid; grid-template-columns: 2fr 1fr; gap: 18px; }
+    .panel, .card { background: white; border: 1px solid #eee; border-radius: 14px; padding: 18px; }
+    .menu { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 12px; }
+    .food { border: 1px solid #eee; border-radius: 12px; padding: 14px; }
+    .emoji { font-size: 40px; }
+    .price { color: #ea580c; font-weight: 700; margin: 8px 0; }
+    .primary { width: 100%; }
+    .tab { display: none; margin-top: 20px; }
+    .tab.active { display: block; }
+    .cart-row, .order-head, .stats { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+    .cart-row { padding: 12px 0; border-bottom: 1px solid #eee; }
+    .qty { display: flex; align-items: center; gap: 8px; }
+    .qty button { padding: 6px 10px; background: #f3f4f6; }
+    input, select { display: block; width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; font: inherit; }
+    .total { font-size: 20px; font-weight: 800; padding: 14px 0; }
+    .muted { color: #6b7280; }
+    .order { margin: 12px 0; }
+    @media (max-width: 760px) { .layout { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <header><div class="bar"><div class="brand">Le-sodine</div><nav aria-label="Main navigation">
+    <button class="active" data-tab="customer">Customer</button><button data-tab="restaurant">Restaurant</button><button data-tab="admin">Admin</button>
+  </nav></div></header>
+  <main>
+    <section id="customer" class="tab active"><div class="layout">
+      <div class="panel"><h1>Menu</h1><div id="menu" class="menu"></div></div>
+      <div class="panel"><h2>Your cart</h2><div id="cart"></div><div class="total">Total: <span id="total">৳0</span></div>
+        <form id="checkout"><input id="customerName" placeholder="Customer name" required /><input id="customerPhone" type="tel" placeholder="Phone number" required /><input id="address" placeholder="Delivery address" required />
+          <select id="payment" required><option value="">Select payment method</option><option>Cash on Delivery</option><option>bKash</option><option>Nagad</option><option>Card</option></select><button class="primary">Place order</button>
+        </form>
+      </div>
+    </div></section>
+    <section id="restaurant" class="tab"><div class="panel"><h1>Restaurant orders</h1><div id="restaurantOrders"></div></div></section>
+    <section id="admin" class="tab"><div class="panel"><h1>Admin dashboard</h1><div id="stats" class="stats"></div><div id="adminOrders"></div></div></section>
+  </main>
+  <script>
+    const products = [
+      {id:1,name:'Chicken Burger',price:320,emoji:'🍔'}, {id:2,name:'Beef Pizza',price:550,emoji:'🍕'},
+      {id:3,name:'Classic Pasta',price:420,emoji:'🍝'}, {id:4,name:'Crispy Fries',price:180,emoji:'🍟'},
+      {id:5,name:'Chicken Wrap',price:260,emoji:'🌯'}, {id:6,name:'Cold Coffee',price:220,emoji:'☕'}
+    ];
+    const read = (key) => { try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch { return []; } };
+    let cart = read('le_sodine_cart'), orders = read('le_sodine_orders');
+    const money = n => '৳' + Number(n || 0).toLocaleString();
+    function save() { localStorage.setItem('le_sodine_cart', JSON.stringify(cart)); localStorage.setItem('le_sodine_orders', JSON.stringify(orders)); }
+    function render() {
+      document.querySelector('#menu').innerHTML = products.map(p => `<article class="food"><div class="emoji">${p.emoji}</div><strong>${p.name}</strong><div class="price">${money(p.price)}</div><button class="primary" data-add="${p.id}">Add to cart</button></article>`).join('');
+      document.querySelector('#cart').innerHTML = cart.length ? cart.map(i => `<div class="cart-row"><span>${i.name}<br><span class="muted">${money(i.price)} each</span></span><span class="qty"><button data-change="${i.id}" data-delta="-1" aria-label="Remove one">−</button>${i.qty}<button data-change="${i.id}" data-delta="1" aria-label="Add one">+</button></span></div>`).join('') : '<p class="muted">Your cart is empty.</p>';
+      const sum = cart.reduce((n,i) => n+i.price*i.qty, 0); document.querySelector('#total').textContent = money(sum);
+      const list = orders.length ? [...orders].reverse().map(o => `<article class="card order"><div class="order-head"><strong>Order #${o.id}</strong><strong>${o.status}</strong></div><p>${o.customerName} · ${o.customerPhone}</p><p>${o.items.map(i=>`${i.name} × ${i.qty}`).join(', ')}</p><p>${o.address} · ${o.payment}</p><strong>${money(o.total)}</strong><div>${['Accepted','Preparing','Ready','Delivered'].map(s=>`<button class="secondary" data-status="${s}" data-id="${o.id}">${s}</button>`).join(' ')}</div></article>`).join('') : '<p class="muted">No orders yet.</p>';
+      document.querySelector('#restaurantOrders').innerHTML = list; document.querySelector('#adminOrders').innerHTML = list;
+      document.querySelector('#stats').innerHTML = `<span>Orders: ${orders.length}</span><span>Revenue: ${money(orders.filter(o=>o.status==='Delivered').reduce((n,o)=>n+o.total,0))}</span>`;
+    }
+    document.addEventListener('click', e => {
+      const add = e.target.closest('[data-add]'); if (add) { const p=products.find(x=>x.id===Number(add.dataset.add)); const i=cart.find(x=>x.id===p.id); i ? i.qty++ : cart.push({...p,qty:1}); save(); render(); }
+      const change = e.target.closest('[data-change]'); if (change) { const i=cart.find(x=>x.id===Number(change.dataset.change)); i.qty+=Number(change.dataset.delta); cart=cart.filter(x=>x.qty>0); save(); render(); }
+      const status = e.target.closest('[data-status]'); if (status) { const o=orders.find(x=>x.id===Number(status.dataset.id)); if(o){o.status=status.dataset.status;save();render();} }
+      const tab = e.target.closest('[data-tab]'); if (tab) { document.querySelectorAll('.tab,nav button').forEach(x=>x.classList.toggle('active',x.id===tab.dataset.tab || x.dataset.tab===tab.dataset.tab)); }
+    });
+    document.querySelector('#checkout').addEventListener('submit', e => {
+      e.preventDefault(); if (!cart.length) { alert('Your cart is empty.'); return; }
+      orders.push({id:Date.now(),customerName:document.querySelector('#customerName').value.trim(),customerPhone:document.querySelector('#customerPhone').value.trim(),address:document.querySelector('#address').value.trim(),payment:document.querySelector('#payment').value,status:'Pending',items:cart.map(i=>({...i})),total:cart.reduce((n,i)=>n+i.price*i.qty,0)});
+      cart=[]; save(); render(); e.target.reset(); alert('Order placed successfully!');
+    });
+    render();
+    if ('serviceWorker' in navigator) window.addEventListener('load', () => navigator.serviceWorker.register('./service-worker.js').catch(err => console.error('Service worker registration failed:', err)));
+  </script>
+</body>
+</html>
