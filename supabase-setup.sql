@@ -6,7 +6,7 @@ create table if not exists public.staff_emails (
   email text primary key check (email = lower(email))
 );
 -- Replace this value with your own staff email, then run this INSERT separately if needed:
-insert into public.staff_emails(email) values ('fokirfardin45@gamil.com') on conflict do nothing;
+insert into public.staff_emails(email) values ('fokirfardin45@gmail.com') on conflict do nothing;
 
 create or replace function public.is_staff()
 returns boolean
