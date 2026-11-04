@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+<title id="title">Le Sodine Agriturismo</title>
+<circle cx="256" cy="256" r="250" fill="#050505"/>
+<circle cx="150" cy="185" r="52" fill="#ed4b78"/><circle cx="256" cy="185" r="52" fill="#f2a51b"/><circle cx="362" cy="185" r="52" fill="#e9dd18"/>
+<g fill="none" stroke="#fff" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+<path d="M139 151v53m8-53v53m8-53v53m-24-30h24m-12 30v28"/>
+<path d="M220 203h72m-64 0v-24h52v24m-50-24 9-13h34l8 13m-45 24a10 10 0 1 0 20 0m18 0a10 10 0 1 0 20 0m-55-1v-23m23 23v-23"/>
+<path d="M326 196h70v20h-70zm8-19h53v19h-53zm8-16v16m25-16v16m-51 40v-13h70v13"/>
+</g>
+<text x="256" y="302" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="40" letter-spacing="3">LE SODINE</text>
+<text x="256" y="337" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="16" letter-spacing="8">AGRITURISMO</text>
+</svg>

@@ -1,5 +1,1 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
-  <rect width="192" height="192" rx="42" fill="#ea580c"/>
-  <path d="M34 132V60h20v54h42v18H34zm70 0V60h54v18h-34v10h30v17h-30v9h35v18h-55z" fill="#fff"/>
-  <circle cx="145" cy="47" r="9" fill="#ffd7b5"/>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192"><circle cx="96" cy="96" r="94" fill="#050505"/><circle cx="57" cy="69" r="25" fill="#ed4b78"/><circle cx="96" cy="69" r="25" fill="#f2a51b"/><circle cx="135" cy="69" r="25" fill="#e9dd18"/><g fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round"><path d="M54 56v26m6-26v26m-12-14h12m-6 14v10m29-10h27v-12H85zm4-12 4-6h13l5 6m-19 12a4 4 0 1 0 8 0m9 0a4 4 0 1 0 8 0m14-5h28v8h-28zm4-8h20v8h-20z"/></g><text x="96" y="127" text-anchor="middle" fill="#fff" font-family="Georgia,serif" font-size="15" letter-spacing="1">LE SODINE</text><text x="96" y="142" text-anchor="middle" fill="#fff" font-family="Arial,sans-serif" font-size="6" letter-spacing="3">AGRITURISMO</text></svg>
